@@ -770,7 +770,7 @@ function renderProduct(params) {
               ${fulfillmentOptions.includes("delivery") ? `<div><dt>배달비</dt><dd>${formatPrice(DELIVERY_FEE)}</dd></div>` : ""}
             </dl>
             <fieldset class="detail-fulfillment">
-              <legend>수령 방식</legend>
+              <legend>수령방식</legend>
               <div class="detail-fulfillment-options">
                 ${fulfillmentOptions.map((fulfillment) => `<label><input type="radio" name="productFulfillment" value="${fulfillment}" ${fulfillment === defaultFulfillment ? "checked" : ""} /><span>${fulfillmentName(fulfillment)}</span></label>`).join("")}
               </div>
@@ -1865,7 +1865,7 @@ function orderListCard(order) {
         </a>
         <dl class="order-history-meta">
           <div><dt>주문경로</dt><dd>${order.orderChannel || "링크주문"}</dd></div>
-          <div><dt>수령 방식</dt><dd>${fulfillmentName(order.fulfillment)}</dd></div>
+          <div><dt>수령방식</dt><dd>${fulfillmentName(order.fulfillment)}</dd></div>
           <div><dt>처리상태</dt><dd>${displayedProcessStatus(order) === "-" ? "-" : `<span class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</span>`}</dd></div>
           <div><dt>결제수단</dt><dd>${paymentMethodName(order.payment)}</dd></div>
           <div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</span></dd></div>
@@ -1954,7 +1954,7 @@ function renderOrderDetail(params) {
         <span>주문번호 <strong>${order.orderNumber}</strong></span>
       </header>
       <div class="order-status-summary ${order.cancelRefundStatus ? "has-request-status" : ""}">
-        <div><span>수령 방식</span><strong>${fulfillmentName(order.fulfillment)}</strong></div>
+        <div><span>수령방식</span><strong>${fulfillmentName(order.fulfillment)}</strong></div>
         <div><span>처리상태</span>${displayedProcessStatus(order) === "-" ? "<strong>-</strong>" : `<strong class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</strong>`}</div>
         <div><span>결제상태</span><strong class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</strong></div>
         ${order.cancelRefundStatus ? `<div class="order-request-status"><span>취소·반품상태</span><strong class="status-badge ${statusClass(order.cancelRefundStatus)}">${order.cancelRefundStatus}</strong></div>` : ""}
