@@ -2176,7 +2176,7 @@ function renderFranchiseSignup() {
               <label class="auth-field"><span>이름 *</span><input name="memberName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
               <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
-            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z0-9]{4,}" placeholder="영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">해당 아이디로 개별 소매몰 URL이 생성됩니다. (ex: 아이디 09shop → 09shop.09scm.com)</small></label>
+            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z0-9]{4,}" placeholder="영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">해당 아이디로 개별 소매몰 URL이 생성됩니다. (예: 아이디.09scm.com)</small></label>
             <div class="auth-form-grid">
               <label class="auth-field"><span>비밀번호 *</span><span class="password-field"><input id="franchisePassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePassword" aria-label="비밀번호 보기">보기</button></span></label>
               <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="franchisePasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
@@ -2236,7 +2236,7 @@ function renderFranchiseSignup() {
   const corporationNumberField = document.querySelector("#corporationNumberField");
   const corporationNumberInput = document.querySelector("#corporationNumber");
   const businessNameLabel = document.querySelector("#businessNameLabel");
-  const franchiseIdGuide = "해당 아이디로 개별 소매몰 URL이 생성됩니다. (ex: 아이디 09shop → 09shop.09scm.com)";
+  const franchiseIdGuide = "해당 아이디로 개별 소매몰 URL이 생성됩니다. (예: 아이디.09scm.com)";
   let userIdChecked = false;
   let phoneVerified = false;
   let businessVerified = false;
