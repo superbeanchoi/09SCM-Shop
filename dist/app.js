@@ -95,6 +95,7 @@ const mockOrders = [
     items: [{ id: 4, quantity: 2 }],
     fulfillment: "pickup",
     processStatus: "픽업완료",
+    completedAt: "2026-09-12T17:00:00+09:00",
     payment: "onsite",
     paymentStatus: "결제완료",
     pickupRequest: "요청사항 없음",
@@ -125,6 +126,7 @@ const mockOrders = [
     items: [{ id: 5, quantity: 1 }],
     fulfillment: "delivery",
     processStatus: "배달완료",
+    completedAt: "2026-09-10T18:00:00+09:00",
     payment: "card",
     paymentStatus: "결제완료",
     deliveryAddressName: "회사",
@@ -169,6 +171,7 @@ const mockOrders = [
     items: [{ id: 11, quantity: 1 }],
     fulfillment: "pickup",
     processStatus: "픽업완료",
+    completedAt: "2026-09-07T18:00:00+09:00",
     payment: "transfer",
     paymentStatus: "결제완료",
     pickupRequest: "요청사항 없음",
@@ -338,7 +341,7 @@ const mockOrders = [
     fulfillment: "pickup",
     processStatus: "픽업대기",
     payment: "onsite",
-    paymentStatus: "결제대기",
+    paymentStatus: "결제취소",
     cancelRefundStatus: "취소승인",
     actionActor: "노쇼처리",
     resolvedAt: "2026.08.31 오후 9:10",
@@ -368,6 +371,28 @@ mockOrders.forEach((order, orderIndex) => {
   order.pickupWindow = order.fulfillment === "pickup" ? pickupWindowIntersection(order.items) : null;
 });
 
+// 반품 가능 기간 안에 있는 완료 주문 사례는 접속일을 기준으로 생성한다.
+const recentOrderDate = localDateKey(-3);
+const recentPickupStart = localDateKey(-2);
+const recentPickupEnd = localDateKey(-1);
+mockOrders.unshift({
+  orderNumber: `RO${recentOrderDate.replaceAll("-", "")}001`,
+  orderedAt: recentOrderDate.replaceAll("-", "."),
+  orderedTime: "오후 2:30",
+  items: [{ id: 4, quantity: 1, pickupStart: recentPickupStart, pickupEnd: recentPickupEnd }],
+  fulfillment: "pickup",
+  processStatus: "픽업완료",
+  completedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  payment: "card",
+  paymentStatus: "결제완료",
+  orderChannel: "링크주문",
+  pickupWindow: { start: recentPickupStart, end: recentPickupEnd },
+  pickupRequest: "요청사항 없음",
+  customerName: "홍길동",
+  phone: "010-1234-5678",
+  nicknameCode: "7942",
+});
+
 // 목업에서 주문서로 생성한 주문도 간편 조회와 주문 상세에 이어서 표시한다.
 try {
   const placedOrders = JSON.parse(localStorage.getItem("onmaeul-placed-orders") || "[]");
@@ -380,7 +405,7 @@ try {
         orderedAt: order.orderedDate || String(order.orderedAt || "").slice(0, 12).trim(),
         items: order.items.map(({ id, quantity, pickupStart, pickupEnd }) => ({ id, quantity, pickupStart, pickupEnd })),
         processStatus: order.processStatus || "주문접수",
-        paymentStatus: order.paymentStatus || (order.payment === "card" ? "결제완료" : "결제대기"),
+        paymentStatus: order.cancelRefundStatus?.endsWith("승인") ? "결제취소" : order.paymentStatus || (order.payment === "card" ? "결제완료" : "결제대기"),
       });
     });
   }
@@ -1083,7 +1108,7 @@ function renderOrder() {
         <aside class="checkout-summary">
           <h2>결제금액</h2>
           <div class="summary-line"><span>상품금액</span><strong>${formatPrice(productTotal)}</strong></div>
-          <div class="summary-line"><span>배달비</span><strong id="deliveryFeeText">0원</strong></div>
+          <div class="summary-line" id="deliveryFeeRow"><span>배달비</span><strong id="deliveryFeeText">0원</strong></div>
           <div class="summary-total"><span>최종 결제금액</span><strong id="finalTotal">${formatPrice(productTotal)}</strong></div>
           <button class="primary-button checkout-submit" id="orderSubmit" type="submit">주문하기</button>
         </aside>
@@ -1098,6 +1123,7 @@ function renderOrder() {
   const deliveryPayment = document.querySelector("#deliveryPayment");
   const transferFields = document.querySelector("#transferFields");
   const deliveryFeeText = document.querySelector("#deliveryFeeText");
+  const deliveryFeeRow = document.querySelector("#deliveryFeeRow");
   const finalTotal = document.querySelector("#finalTotal");
   const orderSubmit = document.querySelector("#orderSubmit");
   const manualDeliveryField = document.querySelector("#manualDeliveryField");
@@ -1113,6 +1139,7 @@ function renderOrder() {
     const deliveryFee = fulfillment === "delivery" ? DELIVERY_FEE : 0;
     const total = productTotal + deliveryFee;
     transferFields.hidden = payment !== "transfer";
+    deliveryFeeRow.hidden = fulfillment !== "delivery";
     deliveryFeeText.textContent = formatPrice(deliveryFee);
     finalTotal.textContent = formatPrice(total);
     orderSubmit.textContent = "주문하기";
@@ -1208,7 +1235,7 @@ function renderOrderComplete() {
           <section class="completion-card"><h2>${isDelivery ? "배달 정보" : "픽업 정보"}</h2><dl class="completion-info">${isDelivery ? `<div><dt>배달지</dt><dd>${order.deliveryAddressName ? `<b>${escapeText(order.deliveryAddressName)}</b><br />` : ""}${escapeText(order.deliveryAddress)}</dd></div>${order.deliveryRequest ? `<div><dt>요청사항</dt><dd>${escapeText(order.deliveryRequest)}</dd></div>` : ""}` : `<div><dt>픽업 장소</dt><dd>온마을 공동구매<br />경기 수원시 영통구 온마을로 27, 1층</dd></div><div><dt>공통 픽업가능일</dt><dd>${pickupPeriodText(order.pickupWindow?.start, order.pickupWindow?.end)}</dd></div>${order.pickupRequest ? `<div><dt>요청사항</dt><dd>${escapeText(order.pickupRequest)}</dd></div>` : ""}`}</dl></section>
           <section class="completion-card"><h2>결제 정보</h2><dl class="completion-info"><div><dt>결제수단</dt><dd>${paymentName}</dd></div>${order.payment === "transfer" ? `<div><dt>입금계좌</dt><dd>국민 123456-01-123456 · 온마을마켓</dd></div><div><dt>입금자명</dt><dd>${escapeText(order.depositorName)}</dd></div>` : ""}</dl></section>
         </div>
-        <aside class="completion-card completion-payment"><h2>결제금액</h2><div><span>상품금액</span><strong>${formatPrice(order.productTotal)}</strong></div><div><span>배달비</span><strong>${formatPrice(order.deliveryFee)}</strong></div><div class="completion-payment-total"><span>최종 결제금액</span><strong>${formatPrice(order.finalTotal)}</strong></div></aside>
+        <aside class="completion-card completion-payment"><h2>결제금액</h2><div><span>상품금액</span><strong>${formatPrice(order.productTotal)}</strong></div>${isDelivery ? `<div><span>배달비</span><strong>${formatPrice(order.deliveryFee)}</strong></div>` : ""}<div class="completion-payment-total"><span>최종 결제금액</span><strong>${formatPrice(order.finalTotal)}</strong></div></aside>
       </div>
       <div class="completion-actions"><a class="secondary-button" href="?view=order-history">주문내역 보기</a><a class="primary-button" href="?view=catalog">쇼핑 계속하기</a></div>
     </section>`;
@@ -1240,6 +1267,19 @@ function statusClass(status) {
   if (["결제실패"].includes(status) || status.endsWith("반려")) return "is-error";
   if (["픽업대기", "배달대기", "결제대기"].includes(status) || status.endsWith("요청")) return "is-warning";
   return "is-neutral";
+}
+
+function displayedProcessStatus(order) {
+  return ["취소요청", "취소승인", "반품요청", "반품승인"].includes(order.cancelRefundStatus)
+    ? "-"
+    : order.processStatus;
+}
+
+function canRequestReturn(order) {
+  if (order.cancelRefundStatus || !["픽업완료", "배달완료"].includes(order.processStatus)) return false;
+  const completedAt = new Date(order.completedAt).getTime();
+  const elapsed = Date.now() - completedAt;
+  return Number.isFinite(completedAt) && elapsed >= 0 && elapsed <= 7 * 24 * 60 * 60 * 1000;
 }
 
 const noOrderDemoMember = {
@@ -1284,6 +1324,18 @@ function readMemberProfile() {
     : baseMember;
 }
 
+function lookupMemberOrders(code) {
+  const member = readMemberProfile();
+  if (member.nicknameCode === code) {
+    return { found: true, nickname: member.chatNickname, orders: mockOrders.filter((order) => phoneDigits(order.phone) === phoneDigits(member.phone)) };
+  }
+  if (noOrderDemoMember.nicknameCode === code) return { found: true, nickname: noOrderDemoMember.chatNickname, orders: [] };
+  if (code === "7942" && phoneDigits(member.phone) !== "01012345678") {
+    return { found: true, nickname: "산책러", orders: mockOrders.filter((order) => phoneDigits(order.phone) === "01012345678") };
+  }
+  return { found: false, nickname: "", orders: [] };
+}
+
 function writeMemberProfile(member) {
   localStorage.setItem("onmaeul-member", JSON.stringify(member));
 }
@@ -1316,8 +1368,6 @@ function myPageFrame(content, current = "orders") {
 
 function renderMyInfo() {
   const member = readMemberProfile();
-  const activeOrders = ongoingOrders();
-  const nicknameLocked = activeOrders.length > 0;
   const content = `
     <header class="mypage-content-heading"><div><h2>내정보</h2><p>주문과 수령에 사용하는 회원정보를 확인합니다.</p></div></header>
     <form id="myInfoForm" class="mypage-form">
@@ -1339,12 +1389,12 @@ function renderMyInfo() {
         <label class="auth-field">
           <span>회원주문 코드 *</span>
           <span class="inline-field">
-            <input id="myNicknameCode" name="nicknameCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" value="${escapeText(member.nicknameCode)}" ${nicknameLocked ? "disabled" : ""} required />
-            <button class="secondary-button" id="checkMyNickname" type="button" ${nicknameLocked ? "disabled" : ""}>중복 확인</button>
+            <input id="myNicknameCode" name="nicknameCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" value="${escapeText(member.nicknameCode)}" required />
+            <button class="secondary-button" id="checkMyNickname" type="button">중복 확인</button>
           </span>
-          <small class="field-message" id="myNicknameMessage">${nicknameLocked ? `진행 중 주문 ${activeOrders.length}건이 있어 변경할 수 없습니다. 픽업완료 또는 배달완료 후 변경해 주세요.` : "변경하려면 새 코드를 입력하고 중복 확인을 진행해 주세요."}</small>
+          <small class="field-message" id="myNicknameMessage">변경하려면 새 코드를 입력하고 중복 확인을 진행해 주세요.</small>
         </label>
-        <label class="auth-field"><span>채팅주문 닉네임</span><input name="chatNickname" type="text" value="${escapeText(member.chatNickname)}" placeholder="오픈채팅방에서 사용하는 닉네임" /><small class="field-message">채팅주문을 이용할 때 회원 확인에 사용합니다.</small></label>
+        <label class="auth-field"><span>채팅주문 닉네임</span><input name="chatNickname" type="text" value="${escapeText(member.chatNickname)}" placeholder="오픈채팅방에서 사용하는 닉네임" /><small class="field-message">채팅주문을 이용하려면 오픈채팅방에서 쓰는 닉네임을 입력해 주세요.</small></label>
       </section>
       <section class="mypage-panel mypage-password-row">
         <div><h3>비밀번호</h3><p>비밀번호를 잊었거나 변경하려면 본인인증 후 재설정할 수 있습니다.</p></div>
@@ -1357,16 +1407,24 @@ function renderMyInfo() {
   const nicknameInput = document.querySelector("#myNicknameCode");
   const nicknameMessage = document.querySelector("#myNicknameMessage");
   let nicknameChecked = false;
-  if (!nicknameLocked) {
+  let checkedNickname = "";
+  {
     document.querySelector("#checkMyNickname").addEventListener("click", () => {
       if (!/^\d{4}$/.test(nicknameInput.value)) return showToast("회원주문 코드 숫자 4자리를 입력해 주세요.");
+      const codeOwnerPhone = nicknameInput.value === "7942" ? "01012345678" : nicknameInput.value === noOrderDemoMember.nicknameCode ? noOrderDemoMember.phone : "";
+      if (codeOwnerPhone && codeOwnerPhone !== phoneDigits(member.phone)) {
+        nicknameChecked = false;
+        return showToast("이미 사용 중인 회원주문 코드입니다.");
+      }
       nicknameChecked = true;
+      checkedNickname = nicknameInput.value;
       nicknameMessage.textContent = "사용할 수 있는 회원주문 코드입니다.";
       nicknameMessage.classList.add("is-success");
     });
     nicknameInput.addEventListener("input", () => {
       nicknameInput.value = nicknameInput.value.replace(/\D/g, "").slice(0, 4);
       nicknameChecked = false;
+      checkedNickname = "";
       nicknameMessage.textContent = "변경하려면 새 코드를 입력하고 중복 확인을 진행해 주세요.";
       nicknameMessage.classList.remove("is-success");
     });
@@ -1374,8 +1432,8 @@ function renderMyInfo() {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!form.reportValidity()) return;
-    const nextNickname = nicknameLocked ? member.nicknameCode : nicknameInput.value.trim();
-    if (!nicknameLocked && nextNickname !== member.nicknameCode && !nicknameChecked) return showToast("회원주문 코드 중복 확인을 완료해 주세요.");
+    const nextNickname = nicknameInput.value.trim();
+    if (nextNickname !== member.nicknameCode && (!nicknameChecked || checkedNickname !== nextNickname)) return showToast("회원주문 코드 중복 확인을 완료해 주세요.");
     writeMemberProfile({
       ...member,
       customerName: form.elements.customerName.value.trim(),
@@ -1457,7 +1515,7 @@ function orderAction(order) {
     const label = order.payment === "card" || order.paymentStatus === "결제대기" ? "주문 취소" : "취소 요청";
     return `<button class="secondary-button order-case-action" type="button" data-order-request="cancel" data-order-number="${order.orderNumber}">${label}</button>`;
   }
-  if (["픽업완료", "배달완료"].includes(order.processStatus)) {
+  if (canRequestReturn(order)) {
     return `<button class="secondary-button order-case-action" type="button" data-order-request="return" data-order-number="${order.orderNumber}">반품 요청</button>`;
   }
   return "";
@@ -1483,6 +1541,7 @@ function orderModalProductSummary(order) {
 function openOrderRequestModal(orderNumber, requestKind) {
   const order = mockOrders.find((item) => item.orderNumber === orderNumber);
   if (!order) return;
+  if (order.cancelRefundStatus || (requestKind === "return" && !canRequestReturn(order)) || (requestKind === "cancel" && order.processStatus !== "주문접수")) return;
   const totals = orderTotals(order);
   const isCancel = requestKind === "cancel";
   const isDirectCardCancel = isCancel && order.payment === "card";
@@ -1492,11 +1551,11 @@ function openOrderRequestModal(orderNumber, requestKind) {
   const note = isDirectCardCancel
     ? "주문과 카드결제가 즉시 취소됩니다."
     : isDirectCancel
-      ? "주문이 즉시 취소되며 판매가능수량이 복구됩니다."
+       ? "결제대기 주문이므로 주문이 즉시 취소됩니다."
     : isCancel
       ? "판매자 확인 후 주문이 취소됩니다."
-      : "판매자 확인 후 반품이 처리됩니다.";
-  const refundFields = !isDirectCancel && order.payment !== "card"
+       : "판매자 확인 후 반품이 처리됩니다.";
+  const refundFields = order.payment === "transfer" && (isCancel ? !isDirectCancel && order.paymentStatus === "결제완료" : true)
     ? `
       <fieldset class="request-refund-fields">
         <legend>환불정보</legend>
@@ -1546,7 +1605,7 @@ function openOrderRequestModal(orderNumber, requestKind) {
       order.refundAccount = data.get("refundAccount");
       order.refundHolder = data.get("refundHolder");
     }
-    if (isDirectCardCancel) order.paymentStatus = "결제취소";
+    if (isDirectCancel) order.paymentStatus = "결제취소";
     if (isDirectCancel) order.items.forEach((item) => { const product = products.find((candidate) => candidate.id === item.id); if (product) product.stock += item.quantity; });
     try {
       const placedOrders = JSON.parse(localStorage.getItem("onmaeul-placed-orders") || "[]");
@@ -1561,7 +1620,7 @@ function openOrderRequestModal(orderNumber, requestKind) {
       quickLookupTab = quickLookupIsComplete(order) ? "complete" : "active";
     }
     renderPage();
-    showToast(isDirectCardCancel ? "주문과 카드결제가 취소되었습니다." : isDirectCancel ? "주문이 취소되고 판매가능수량이 복구되었습니다." : isCancel ? "취소 요청이 접수되었습니다." : "반품 요청이 접수되었습니다.");
+    showToast(isDirectCardCancel ? "주문과 카드결제가 취소되었습니다." : isDirectCancel ? "주문이 취소되었습니다." : isCancel ? "취소 요청이 접수되었습니다." : "반품 요청이 접수되었습니다.");
   });
 }
 
@@ -1622,11 +1681,12 @@ function quickLookupIsComplete(order) {
 
 function quickLookupOrderCard(order, showActions = true) {
   const rows = getMockOrderRows(order);
+  const processStatus = displayedProcessStatus(order);
   const action = order.cancelRefundStatus
     ? `<button class="secondary-button" type="button" data-quick-action="request-detail" data-order-number="${escapeText(order.orderNumber)}">취소·반품 상세</button>`
     : order.processStatus === "주문접수"
       ? `<button class="secondary-button" type="button" data-quick-action="cancel" data-order-number="${escapeText(order.orderNumber)}">${order.payment === "card" || order.paymentStatus === "결제대기" ? "주문 취소" : "취소 요청"}</button>`
-      : ["픽업완료", "배달완료"].includes(order.processStatus)
+      : canRequestReturn(order)
         ? `<button class="secondary-button" type="button" data-quick-action="return" data-order-number="${escapeText(order.orderNumber)}">반품 요청</button>`
         : "";
   return `<article class="quick-order-card">
@@ -1638,7 +1698,7 @@ function quickLookupOrderCard(order, showActions = true) {
         <ul>${rows.map(({ product, quantity }) => `<li>${escapeText(product.name)} <span>${quantity}개</span></li>`).join("")}</ul>
       </div>
       <dl class="quick-order-facts">
-        <div><dt>처리상태</dt><dd><span class="status-badge ${statusClass(order.processStatus)}">${escapeText(order.processStatus)}</span></dd></div>
+        <div><dt>처리상태</dt><dd>${processStatus === "-" ? "-" : `<span class="status-badge ${statusClass(processStatus)}">${escapeText(processStatus)}</span>`}</dd></div>
         <div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${escapeText(order.paymentStatus)}</span></dd></div>
         ${order.cancelRefundStatus ? `<div><dt>취소·반품</dt><dd><span class="status-badge ${statusClass(order.cancelRefundStatus)}">${escapeText(order.cancelRefundStatus)}</span></dd></div>` : ""}
         <div><dt>결제금액</dt><dd><strong>${formatPrice(orderTotals(order).finalTotal)}</strong></dd></div>
@@ -1690,14 +1750,12 @@ function renderQuickOrderLookup() {
   const result = document.querySelector("#quickLookupResult");
   const showOrders = (code, initialTab = quickLookupTab) => {
     quickLookupCode = code;
-    const orders = mockOrders.filter((order) => order.nicknameCode === code);
-    const member = readMemberProfile();
-    if (!orders.length && member.nicknameCode !== code && noOrderDemoMember.nicknameCode !== code) {
+    const { found, nickname, orders } = lookupMemberOrders(code);
+    if (!found) {
       result.innerHTML = `<p class="quick-lookup-empty" role="status">일치하는 회원주문 코드가 없습니다.</p>`;
       return;
     }
-    const nickname = code === member.nicknameCode ? member.chatNickname : orders.find((order) => order.chatNickname)?.chatNickname;
-    result.innerHTML = `<div class="quick-lookup-member"><span>회원주문 코드 <strong>${escapeText(code)}</strong></span><span>채팅주문 닉네임 <strong>${escapeText(nickname || "미등록")}</strong></span></div>
+    result.innerHTML = `<div class="quick-lookup-member"><span>회원주문 코드 <strong>${escapeText(code)}</strong></span><span>채팅주문 닉네임 <strong>${escapeText(nickname || "-")}</strong></span></div>
       <div class="quick-lookup-tabs" role="tablist" aria-label="주문 진행 상태"><button type="button" class="is-active" data-quick-tab="active" aria-selected="true">진행 중 주문 <b>${orders.filter((order) => !quickLookupIsComplete(order)).length}</b></button><button type="button" data-quick-tab="complete" aria-selected="false">완료된 주문 <b>${orders.filter(quickLookupIsComplete).length}</b></button></div>
       <div class="quick-lookup-list" id="quickLookupList"></div>`;
     const list = document.querySelector("#quickLookupList");
@@ -1767,14 +1825,12 @@ function renderUnavailable() {
     const code = input.value.replace(/\D/g, "").slice(0, 4);
     input.value = code;
     if (code.length !== 4) return showToast("회원주문 코드 숫자 4자리를 입력해 주세요.");
-    const orders = mockOrders.filter((order) => order.nicknameCode === code);
-    const member = readMemberProfile();
-    if (!orders.length && member.nicknameCode !== code && noOrderDemoMember.nicknameCode !== code) {
+    const { found, nickname, orders } = lookupMemberOrders(code);
+    if (!found) {
       result.innerHTML = `<p class="quick-lookup-empty" role="status">일치하는 회원주문 코드가 없습니다.</p>`;
       return;
     }
-    const nickname = code === member.nicknameCode ? member.chatNickname : orders.find((order) => order.chatNickname)?.chatNickname;
-    result.innerHTML = `<div class="quick-lookup-member"><span>회원주문 코드 <strong>${escapeText(code)}</strong></span><span>채팅주문 닉네임 <strong>${escapeText(nickname || "미등록")}</strong></span></div>
+    result.innerHTML = `<div class="quick-lookup-member"><span>회원주문 코드 <strong>${escapeText(code)}</strong></span><span>채팅주문 닉네임 <strong>${escapeText(nickname || "-")}</strong></span></div>
       <div class="quick-lookup-tabs" role="tablist" aria-label="주문 진행 상태"><button type="button" data-unavailable-tab="active">진행 중 주문 <b>${orders.filter((order) => !quickLookupIsComplete(order)).length}</b></button><button type="button" data-unavailable-tab="complete">완료된 주문 <b>${orders.filter(quickLookupIsComplete).length}</b></button></div>
       <div class="quick-lookup-list" id="unavailableLookupList"></div>`;
     const list = result.querySelector("#unavailableLookupList");
@@ -1797,7 +1853,7 @@ function orderListCard(order) {
   const first = rows[0];
   const totals = orderTotals(order);
   return `
-    <article class="order-history-card" data-process-status="${order.processStatus}" data-cancel-refund-status="${order.cancelRefundStatus || ""}" data-order-channel="${order.orderChannel}">
+    <article class="order-history-card" data-process-status="${displayedProcessStatus(order)}" data-cancel-refund-status="${order.cancelRefundStatus || ""}" data-order-channel="${order.orderChannel}">
       <header>
         <strong>${order.orderedAt}</strong>
         <div class="order-history-header-meta">${order.fulfillment === "pickup" && order.pickupWindow ? `<span>공통 픽업가능일 <b>${pickupPeriodText(order.pickupWindow.start, order.pickupWindow.end)}</b></span>` : ""}<span>주문번호 <b>${order.orderNumber}</b></span></div>
@@ -1810,7 +1866,7 @@ function orderListCard(order) {
         <dl class="order-history-meta">
           <div><dt>주문경로</dt><dd>${order.orderChannel || "링크주문"}</dd></div>
           <div><dt>수령 방식</dt><dd>${fulfillmentName(order.fulfillment)}</dd></div>
-          <div><dt>처리상태</dt><dd><span class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</span></dd></div>
+          <div><dt>처리상태</dt><dd>${displayedProcessStatus(order) === "-" ? "-" : `<span class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</span>`}</dd></div>
           <div><dt>결제수단</dt><dd>${paymentMethodName(order.payment)}</dd></div>
           <div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</span></dd></div>
           <div><dt>결제금액</dt><dd><strong>${formatPrice(totals.finalTotal)}</strong></dd></div>
@@ -1899,7 +1955,7 @@ function renderOrderDetail(params) {
       </header>
       <div class="order-status-summary ${order.cancelRefundStatus ? "has-request-status" : ""}">
         <div><span>수령 방식</span><strong>${fulfillmentName(order.fulfillment)}</strong></div>
-        <div><span>처리상태</span><strong class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</strong></div>
+        <div><span>처리상태</span>${displayedProcessStatus(order) === "-" ? "<strong>-</strong>" : `<strong class="status-badge ${statusClass(order.processStatus)}">${order.processStatus}</strong>`}</div>
         <div><span>결제상태</span><strong class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</strong></div>
         ${order.cancelRefundStatus ? `<div class="order-request-status"><span>취소·반품상태</span><strong class="status-badge ${statusClass(order.cancelRefundStatus)}">${order.cancelRefundStatus}</strong></div>` : ""}
       </div>
@@ -1933,7 +1989,7 @@ function renderOrderDetail(params) {
       <h3>결제 정보</h3>
       <div class="order-payment-layout">
         <dl class="order-detail-info"><div><dt>결제수단</dt><dd>${paymentMethodName(order.payment)}</dd></div><div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</span></dd></div>${order.payment === "transfer" ? "<div><dt>입금계좌</dt><dd>국민 123456-01-123456 · 온마을마켓</dd></div>" : ""}</dl>
-        <dl class="order-payment-total"><div><dt>상품금액</dt><dd>${formatPrice(totals.productTotal)}</dd></div><div><dt>배달비</dt><dd>${formatPrice(totals.deliveryFee)}</dd></div><div><dt>최종 결제금액</dt><dd>${formatPrice(totals.finalTotal)}</dd></div></dl>
+        <dl class="order-payment-total"><div><dt>상품금액</dt><dd>${formatPrice(totals.productTotal)}</dd></div>${isDelivery ? `<div><dt>배달비</dt><dd>${formatPrice(totals.deliveryFee)}</dd></div>` : ""}<div><dt>최종 결제금액</dt><dd>${formatPrice(totals.finalTotal)}</dd></div></dl>
       </div>
     </section>
     <div class="order-detail-actions">${orderAction(order)}<a class="secondary-button" href="?view=order-history">목록으로</a></div>`;
@@ -2029,7 +2085,7 @@ function renderSignup() {
               <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
             <label class="auth-field"><span>회원주문 코드 *</span><span class="inline-field"><input id="aliasCode" name="nicknameCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required /><button class="secondary-button" id="checkAliasCode" type="button">중복 확인</button></span><small class="field-message" id="aliasMessage">주문 확인과 현장 수령에 사용하는 숫자 4자리 코드입니다.</small></label>
-            <label class="auth-field"><span>채팅주문 닉네임</span><input name="chatNickname" type="text" placeholder="오픈채팅방에서 사용하는 닉네임" /><small class="field-message">채팅주문을 이용하는 경우에 입력해 주세요.</small></label>
+            <label class="auth-field"><span>채팅주문 닉네임</span><input name="chatNickname" type="text" placeholder="오픈채팅방에서 사용하는 닉네임" /><small class="field-message">채팅주문을 이용하려면 오픈채팅방에서 쓰는 닉네임을 입력해 주세요.</small></label>
           </section>
 
           <section class="auth-form-section optional-section">
@@ -2085,6 +2141,7 @@ function renderSignup() {
   });
   document.querySelector("#checkAliasCode").addEventListener("click", () => {
     if (!/^\d{4}$/.test(document.querySelector("#aliasCode").value)) return showToast("회원주문 코드 숫자 4자리를 입력해 주세요.");
+    if ([noOrderDemoMember.nicknameCode, "7942"].includes(document.querySelector("#aliasCode").value)) return showToast("이미 사용 중인 회원주문 코드입니다.");
     aliasChecked = true;
     aliasMessage.textContent = "사용할 수 있는 회원주문 코드입니다.";
     aliasMessage.classList.add("is-success");
@@ -2166,7 +2223,6 @@ function renderFranchiseSignup() {
             <div><dt>소속 본사</dt><dd>온마을 공동구매 본사</dd></div>
             <div><dt>월 이용료</dt><dd>월 30,000원</dd></div>
           </dl>
-          <p>PayApp 가입·연동과 이용료 결제는 본사 승인 후 진행합니다.</p>
         </div>
 
         <form id="franchiseSignupForm" class="auth-form auth-form-long">

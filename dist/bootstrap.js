@@ -1,4 +1,5 @@
 const app = document.querySelector("#app");
+const telecomSalesRegistrationNumber = window.retailMallSettings?.telecomSalesRegistrationNumber ?? "제2026-수원영통-0001호";
 
 app.innerHTML = `
   <div class="utility-bar">
@@ -73,6 +74,7 @@ app.innerHTML = `
           <span>상호명 <strong>온마을마켓</strong></span>
           <span>대표자명 <strong>김하늘</strong></span>
           <span>사업자등록번호 <strong>123-45-67890</strong></span>
+          ${telecomSalesRegistrationNumber ? `<span>통신판매업 신고번호 <strong>${String(telecomSalesRegistrationNumber).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character])}</strong></span>` : ""}
           <span>사업장주소 <strong>경기 수원시 영통구 온마을로 27</strong></span>
         </div>
         <nav aria-label="약관 메뉴"><a href="?view=terms">이용약관</a><a class="privacy-link" href="?view=privacy">개인정보처리방침</a></nav>
@@ -84,6 +86,6 @@ app.innerHTML = `
 `;
 
 const logic = document.createElement("script");
-logic.src = "./app.js?v=20261006-12";
+logic.src = "./app.js?v=20261006-13";
 document.body.appendChild(logic);
 

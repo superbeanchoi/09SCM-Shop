@@ -1053,6 +1053,7 @@ img { display: block; max-width: 100%; }
 .checkout-summary { position: sticky; top: 96px; }
 .checkout-summary h2 { margin-bottom: 22px; }
 .summary-line { display: flex; justify-content: space-between; gap: 12px; margin: 12px 0; color: var(--text-secondary); }
+.summary-line[hidden] { display: none; }
 .summary-line strong { color: var(--text-body); }
 .summary-total { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border); }
 .summary-total strong { color: var(--key-color); font-size: 24px; }
@@ -1760,3 +1761,4 @@ body.is-unavailable .quick-order-lookup { display: none; }
   .unavailable-lookup { padding: 24px 16px; }
   .unavailable-lookup .quick-lookup-heading h2 { font-size: 20px; }
 }
+
