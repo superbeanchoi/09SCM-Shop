@@ -5,11 +5,7 @@
 ## 접속 주소
 
 - [GitHub Pages 소매몰 목업](https://superbeanchoi.github.io/09SCM-Shop/)
-- [로그인 화면](https://superbeanchoi.github.io/09SCM-Shop/?view=login)
-- [간편 주문 조회](https://superbeanchoi.github.io/09SCM-Shop/?view=quick-order-lookup)
-- [소매몰 이용 불가 화면](https://superbeanchoi.github.io/09SCM-Shop/?view=unavailable) — 별도 미리보기이며 실제 소매몰 접근을 차단하지 않습니다.
-- [가맹점 가입신청 화면](https://superbeanchoi.github.io/09SCM-Shop/?view=franchise-signup)
-- [기존 ChatGPT Sites 주소](https://scm09-retail-mall-mockup.csb62929.chatgpt.site/) — 별도 배포 주소이며 GitHub 변경사항과 자동 동기화되지 않습니다.
+- [대문 화면](https://superbeanchoi.github.io/09SCM-Shop/?view=unavailable) — 별도 미리보기이며 실제 소매몰 접근을 차단하지 않습니다.
 
 ## 시연용 회원 정보
 
