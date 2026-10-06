@@ -1324,8 +1324,8 @@ function renderMyInfo() {
       <section class="mypage-panel">
         <h3>기본정보</h3>
         <div class="mypage-form-grid">
-          <label class="auth-field"><span>이름</span><input name="customerName" type="text" value="${escapeText(member.customerName)}" required /></label>
-          <label class="auth-field"><span>이메일</span><input name="email" type="email" value="${escapeText(member.email)}" required /></label>
+          <label class="auth-field"><span>이름 *</span><input name="customerName" type="text" value="${escapeText(member.customerName)}" required /></label>
+          <label class="auth-field"><span>이메일 *</span><input name="email" type="email" value="${escapeText(member.email)}" required /></label>
         </div>
         <div class="mypage-readonly-field">
           <span>휴대폰번호</span>
@@ -1337,9 +1337,9 @@ function renderMyInfo() {
         <h3>회원주문 코드</h3>
         <p class="mypage-section-copy">주문 확인과 현장 수령 시 본인확인에 사용하는 숫자 4자리 코드입니다.</p>
         <label class="auth-field">
-          <span>회원주문 코드</span>
+          <span>회원주문 코드 *</span>
           <span class="inline-field">
-            <input id="myNicknameCode" name="nicknameCode" inputmode="numeric" maxlength="4" value="${escapeText(member.nicknameCode)}" ${nicknameLocked ? "disabled" : ""} required />
+            <input id="myNicknameCode" name="nicknameCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" value="${escapeText(member.nicknameCode)}" ${nicknameLocked ? "disabled" : ""} required />
             <button class="secondary-button" id="checkMyNickname" type="button" ${nicknameLocked ? "disabled" : ""}>중복 확인</button>
           </span>
           <small class="field-message" id="myNicknameMessage">${nicknameLocked ? `진행 중 주문 ${activeOrders.length}건이 있어 변경할 수 없습니다. 픽업완료 또는 배달완료 후 변경해 주세요.` : "변경하려면 새 코드를 입력하고 중복 확인을 진행해 주세요."}</small>
@@ -1365,6 +1365,7 @@ function renderMyInfo() {
       nicknameMessage.classList.add("is-success");
     });
     nicknameInput.addEventListener("input", () => {
+      nicknameInput.value = nicknameInput.value.replace(/\D/g, "").slice(0, 4);
       nicknameChecked = false;
       nicknameMessage.textContent = "변경하려면 새 코드를 입력하고 중복 확인을 진행해 주세요.";
       nicknameMessage.classList.remove("is-success");
@@ -2011,28 +2012,28 @@ function renderSignup() {
         <form id="signupForm" class="auth-form auth-form-long">
           <section class="auth-form-section">
             <div class="auth-section-title"><span>01</span><h2>휴대폰번호 인증</h2></div>
-            <label class="auth-field"><span>휴대폰번호</span><span class="inline-field"><input id="signupPhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendSignupCode" type="button">인증번호 발송</button></span></label>
-            <label class="auth-field"><span>인증번호</span><span class="inline-field"><input id="signupCode" inputmode="numeric" maxlength="6" placeholder="숫자 6자리" /><button class="secondary-button" id="verifySignupCode" type="button">확인</button></span><small class="field-message" id="signupPhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
+            <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field"><input id="signupPhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendSignupCode" type="button">인증번호 발송</button></span></label>
+            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="signupCode" inputmode="numeric" maxlength="6" placeholder="숫자 6자리" /><button class="secondary-button" id="verifySignupCode" type="button">확인</button></span><small class="field-message" id="signupPhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
           </section>
 
           <section class="auth-form-section">
             <div class="auth-section-title"><span>02</span><h2>로그인 정보</h2></div>
-            <label class="auth-field"><span>비밀번호</span><span class="password-field"><input id="signupPassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="signupPassword" aria-label="비밀번호 보기">보기</button></span></label>
-            <label class="auth-field"><span>비밀번호 확인</span><span class="password-field"><input id="signupPasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="signupPasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
+            <label class="auth-field"><span>비밀번호 *</span><span class="password-field"><input id="signupPassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="signupPassword" aria-label="비밀번호 보기">보기</button></span></label>
+            <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="signupPasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="signupPasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
           </section>
 
           <section class="auth-form-section">
             <div class="auth-section-title"><span>03</span><h2>회원정보</h2></div>
             <div class="auth-form-grid">
-              <label class="auth-field"><span>주문자명</span><input name="customerName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
-              <label class="auth-field"><span>이메일</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
+              <label class="auth-field"><span>주문자명 *</span><input name="customerName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
+              <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
-            <label class="auth-field"><span>회원주문 코드</span><span class="inline-field"><input id="aliasCode" name="nicknameCode" inputmode="numeric" maxlength="4" placeholder="숫자 4자리" required /><button class="secondary-button" id="checkAliasCode" type="button">중복 확인</button></span><small class="field-message" id="aliasMessage">주문 확인과 현장 수령에 사용하는 숫자 4자리 코드입니다.</small></label>
+            <label class="auth-field"><span>회원주문 코드 *</span><span class="inline-field"><input id="aliasCode" name="nicknameCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required /><button class="secondary-button" id="checkAliasCode" type="button">중복 확인</button></span><small class="field-message" id="aliasMessage">주문 확인과 현장 수령에 사용하는 숫자 4자리 코드입니다.</small></label>
             <label class="auth-field"><span>채팅주문 닉네임</span><input name="chatNickname" type="text" placeholder="오픈채팅방에서 사용하는 닉네임" /><small class="field-message">채팅주문을 이용하는 경우에 입력해 주세요.</small></label>
           </section>
 
           <section class="auth-form-section optional-section">
-            <div class="auth-section-title"><span>04</span><h2>대표 배달지 등록</h2><b>선택</b></div>
+            <div class="auth-section-title"><span>04</span><h2>대표 배달지 등록</h2></div>
             <p class="auth-section-description">입력한 주소는 마이페이지의 대표 배달지로 저장됩니다. 픽업만 이용한다면 입력하지 않아도 됩니다.</p>
             <div class="auth-form-grid address-grid">
               <label class="auth-field"><span>배달지명</span><input name="addressName" type="text" placeholder="예: 집" /></label>
@@ -2043,8 +2044,8 @@ function renderSignup() {
           <section class="auth-form-section agreement-list">
             <div class="auth-section-title"><span>05</span><h2>약관 동의</h2></div>
             <label class="auth-checkbox agreement-all"><input id="agreeAll" type="checkbox" /><span>전체 동의</span></label>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeTerms" type="checkbox" required /><span>이용약관 동의</span></label><a href="?view=terms">보기</a></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span>개인정보처리방침 동의</span></label><a href="?view=privacy">보기</a></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeTerms" type="checkbox" required /><span>이용약관 동의 *</span></label><a href="?view=terms">보기</a></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span>개인정보처리방침 동의 *</span></label><a href="?view=privacy">보기</a></div>
           </section>
 
           <button class="primary-button auth-submit" type="submit">회원가입 완료</button>
@@ -2083,6 +2084,7 @@ function renderSignup() {
     aliasMessage.classList.add("is-success");
   });
   document.querySelector("#aliasCode").addEventListener("input", () => {
+    document.querySelector("#aliasCode").value = document.querySelector("#aliasCode").value.replace(/\D/g, "").slice(0, 4);
     aliasChecked = false;
     aliasMessage.textContent = "주문 확인과 현장 수령에 사용하는 숫자 4자리 코드입니다.";
     aliasMessage.classList.remove("is-success");
@@ -2168,7 +2170,7 @@ function renderFranchiseSignup() {
               <label class="auth-field"><span>이름 *</span><input name="memberName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
               <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
-            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z][A-Za-z0-9]{3,}" placeholder="영문으로 시작하는 영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">09SCM 가맹점 관리자 로그인에 사용할 아이디입니다.</small></label>
+            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z][A-Za-z0-9]{3,}" placeholder="영문으로 시작하는 영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">09SCM 가맹점 관리자 로그인에 사용하며, 이 아이디로 개별 소매몰 URL이 생성됩니다. 예: 아이디 onmaeul → https://onmaeul.09scm.com</small></label>
             <div class="auth-form-grid">
               <label class="auth-field"><span>비밀번호 *</span><span class="password-field"><input id="franchisePassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePassword" aria-label="비밀번호 보기">보기</button></span></label>
               <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="franchisePasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
@@ -2188,11 +2190,11 @@ function renderFranchiseSignup() {
               <label class="auth-field"><span id="businessNameLabel">상호명 *</span><input name="businessName" type="text" placeholder="사업자등록증의 상호명을 입력해 주세요." required /></label>
               <label class="auth-field"><span>대표자명 *</span><input name="representativeName" type="text" placeholder="대표자명을 입력해 주세요." required /></label>
             </div>
-            <label class="auth-field"><span>사업자등록번호 *</span><span class="inline-field"><input id="businessNumber" name="businessNumber" inputmode="numeric" placeholder="숫자만 입력해 주세요." required /><button class="secondary-button" id="verifyBusinessNumber" type="button">사업자 인증</button></span><small class="field-message" id="businessNumberMessage">사업자등록번호 인증이 필요합니다.</small></label>
-            <label class="auth-field corporation-only" id="corporationNumberField" hidden><span>법인등록번호 *</span><input id="corporationNumber" name="corporationNumber" type="text" placeholder="법인등록번호를 입력해 주세요." /></label>
+            <label class="auth-field"><span>사업자등록번호 *</span><span class="inline-field"><input id="businessNumber" name="businessNumber" type="text" inputmode="numeric" maxlength="12" pattern="[0-9]{3}-[0-9]{2}-[0-9]{5}" placeholder="000-00-00000" required /><button class="secondary-button" id="verifyBusinessNumber" type="button">사업자 인증</button></span><small class="field-message" id="businessNumberMessage">사업자등록번호 인증이 필요합니다.</small></label>
+            <label class="auth-field corporation-only" id="corporationNumberField" hidden><span>법인등록번호 *</span><input id="corporationNumber" name="corporationNumber" type="text" inputmode="numeric" maxlength="14" pattern="[0-9]{6}-[0-9]{7}" placeholder="000000-0000000" /></label>
             <div class="auth-form-grid">
-              <label class="auth-field"><span>업태 <b class="optional-label">선택</b></span><input name="businessCondition" type="text" placeholder="예: 도소매업" /></label>
-              <label class="auth-field"><span>업종 <b class="optional-label">선택</b></span><input name="businessCategory" type="text" placeholder="예: 농산물" /></label>
+              <label class="auth-field"><span>업태</span><input name="businessCondition" type="text" placeholder="예: 도소매업" /></label>
+              <label class="auth-field"><span>업종</span><input name="businessCategory" type="text" placeholder="예: 농산물" /></label>
             </div>
             <label class="auth-field"><span>사업장 주소 *</span><span class="inline-field address-search-field"><input id="businessPostalCode" name="postalCode" type="text" placeholder="우편번호" readonly required /><button class="secondary-button" id="findBusinessAddress" type="button">주소 찾기</button></span></label>
             <label class="auth-field"><span class="visually-hidden">기본주소</span><input id="businessAddress" name="businessAddress" type="text" placeholder="기본주소" readonly required /></label>
@@ -2202,10 +2204,10 @@ function renderFranchiseSignup() {
           <section class="auth-form-section agreement-list">
             <div class="auth-section-title"><span>03</span><h2>서비스 이용 및 약관 동의</h2></div>
             <label class="auth-checkbox agreement-all"><input id="franchiseAgreeAll" type="checkbox" /><span>전체 동의</span></label>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeServiceTerms" type="checkbox" required /><span><b>[필수]</b> 09SCM 서비스 이용약관 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="service">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span><b>[필수]</b> 개인정보 수집·이용 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="privacy">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeHeadOffice" type="checkbox" required /><span><b>[필수]</b> 소속 본사에 가입정보 제공 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="headOffice">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeMarketing" type="checkbox" /><span><b>[선택]</b> 마케팅 정보 수신 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="marketing">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeServiceTerms" type="checkbox" required /><span>09SCM 서비스 이용약관 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="service">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span>개인정보 수집·이용 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="privacy">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeHeadOffice" type="checkbox" required /><span>소속 본사에 가입정보 제공 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="headOffice">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeMarketing" type="checkbox" /><span>마케팅 정보 수신 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="marketing">보기</button></div>
           </section>
 
           <div class="franchise-form-actions">
@@ -2228,6 +2230,7 @@ function renderFranchiseSignup() {
   const corporationNumberField = document.querySelector("#corporationNumberField");
   const corporationNumberInput = document.querySelector("#corporationNumber");
   const businessNameLabel = document.querySelector("#businessNameLabel");
+  const franchiseIdGuide = "09SCM 가맹점 관리자 로그인에 사용하며, 이 아이디로 개별 소매몰 URL이 생성됩니다. 예: 아이디 onmaeul → https://onmaeul.09scm.com";
   let userIdChecked = false;
   let phoneVerified = false;
   let businessVerified = false;
@@ -2235,12 +2238,12 @@ function renderFranchiseSignup() {
   document.querySelector("#checkFranchiseUserId").addEventListener("click", () => {
     if (!/^[A-Za-z][A-Za-z0-9]{3,}$/.test(userIdInput.value)) return showToast("아이디 입력 형식을 확인해 주세요.");
     userIdChecked = true;
-    userIdMessage.textContent = "사용할 수 있는 아이디입니다.";
+    userIdMessage.textContent = `사용할 수 있는 아이디입니다. ${franchiseIdGuide}`;
     userIdMessage.classList.add("is-success");
   });
   userIdInput.addEventListener("input", () => {
     userIdChecked = false;
-    userIdMessage.textContent = "09SCM 가맹점 관리자 로그인에 사용할 아이디입니다.";
+    userIdMessage.textContent = franchiseIdGuide;
     userIdMessage.classList.remove("is-success");
   });
   document.querySelector("#sendFranchiseCode").addEventListener("click", () => {
@@ -2264,9 +2267,15 @@ function renderFranchiseSignup() {
     businessNumberMessage.classList.add("is-success");
   });
   businessNumberInput.addEventListener("input", () => {
+    const digits = businessNumberInput.value.replace(/\D/g, "").slice(0, 10);
+    businessNumberInput.value = [digits.slice(0, 3), digits.slice(3, 5), digits.slice(5)].filter(Boolean).join("-");
     businessVerified = false;
     businessNumberMessage.textContent = "사업자등록번호 인증이 필요합니다.";
     businessNumberMessage.classList.remove("is-success");
+  });
+  corporationNumberInput.addEventListener("input", () => {
+    const digits = corporationNumberInput.value.replace(/\D/g, "").slice(0, 13);
+    corporationNumberInput.value = [digits.slice(0, 6), digits.slice(6)].filter(Boolean).join("-");
   });
   form.querySelectorAll("[name=businessType]").forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -2561,3 +2570,4 @@ searchPanel.addEventListener("submit", (event) => {
 renderCategories();
 renderPage();
 bindNoticeButtons();
+
