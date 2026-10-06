@@ -2013,7 +2013,7 @@ function renderSignup() {
           <section class="auth-form-section">
             <div class="auth-section-title"><span>01</span><h2>휴대폰번호 인증</h2></div>
             <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field"><input id="signupPhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendSignupCode" type="button">인증번호 발송</button></span></label>
-            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="signupCode" inputmode="numeric" maxlength="6" placeholder="숫자 6자리" /><button class="secondary-button" id="verifySignupCode" type="button">확인</button></span><small class="field-message" id="signupPhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
+            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="signupCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="숫자 6자리" /><button class="secondary-button" id="verifySignupCode" type="button">확인</button></span><small class="field-message" id="signupPhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
           </section>
 
           <section class="auth-form-section">
@@ -2069,6 +2069,12 @@ function renderSignup() {
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
     phoneVerified = false;
     phoneMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
+    phoneMessage.classList.remove("is-success");
+  });
+  document.querySelector("#signupCode").addEventListener("input", (event) => {
+    event.target.value = event.target.value.replace(/\D/g, "").slice(0, 6);
+    phoneVerified = false;
+    phoneMessage.textContent = "휴대폰번호 인증이 필요합니다.";
     phoneMessage.classList.remove("is-success");
   });
   document.querySelector("#verifySignupCode").addEventListener("click", () => {
@@ -2170,13 +2176,13 @@ function renderFranchiseSignup() {
               <label class="auth-field"><span>이름 *</span><input name="memberName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
               <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
-            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z][A-Za-z0-9]{3,}" placeholder="영문으로 시작하는 영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">09SCM 가맹점 관리자 로그인에 사용하며, 이 아이디로 개별 소매몰 URL이 생성됩니다. 예: 아이디 onmaeul → https://onmaeul.09scm.com</small></label>
+            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z0-9]{4,}" placeholder="영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">해당 아이디로 개별 소매몰 URL이 생성됩니다. (ex: 아이디 09shop → 09shop.09scm.com)</small></label>
             <div class="auth-form-grid">
               <label class="auth-field"><span>비밀번호 *</span><span class="password-field"><input id="franchisePassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePassword" aria-label="비밀번호 보기">보기</button></span></label>
               <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="franchisePasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
             </div>
             <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field"><input id="franchisePhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendFranchiseCode" type="button">인증번호 발송</button></span></label>
-            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="franchiseCode" inputmode="numeric" maxlength="6" placeholder="숫자 6자리" required /><button class="secondary-button" id="verifyFranchiseCode" type="button">인증하기</button></span><small class="field-message" id="franchisePhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
+            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="franchiseCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="숫자 6자리" required /><button class="secondary-button" id="verifyFranchiseCode" type="button">인증하기</button></span><small class="field-message" id="franchisePhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
           </section>
 
           <section class="auth-form-section">
@@ -2230,13 +2236,13 @@ function renderFranchiseSignup() {
   const corporationNumberField = document.querySelector("#corporationNumberField");
   const corporationNumberInput = document.querySelector("#corporationNumber");
   const businessNameLabel = document.querySelector("#businessNameLabel");
-  const franchiseIdGuide = "09SCM 가맹점 관리자 로그인에 사용하며, 이 아이디로 개별 소매몰 URL이 생성됩니다. 예: 아이디 onmaeul → https://onmaeul.09scm.com";
+  const franchiseIdGuide = "해당 아이디로 개별 소매몰 URL이 생성됩니다. (ex: 아이디 09shop → 09shop.09scm.com)";
   let userIdChecked = false;
   let phoneVerified = false;
   let businessVerified = false;
 
   document.querySelector("#checkFranchiseUserId").addEventListener("click", () => {
-    if (!/^[A-Za-z][A-Za-z0-9]{3,}$/.test(userIdInput.value)) return showToast("아이디 입력 형식을 확인해 주세요.");
+    if (!/^[A-Za-z0-9]{4,}$/.test(userIdInput.value)) return showToast("아이디 입력 형식을 확인해 주세요.");
     userIdChecked = true;
     userIdMessage.textContent = `사용할 수 있는 아이디입니다. ${franchiseIdGuide}`;
     userIdMessage.classList.add("is-success");
@@ -2251,6 +2257,12 @@ function renderFranchiseSignup() {
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
     phoneVerified = false;
     phoneMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
+    phoneMessage.classList.remove("is-success");
+  });
+  document.querySelector("#franchiseCode").addEventListener("input", (event) => {
+    event.target.value = event.target.value.replace(/\D/g, "").slice(0, 6);
+    phoneVerified = false;
+    phoneMessage.textContent = "휴대폰번호 인증이 필요합니다.";
     phoneMessage.classList.remove("is-success");
   });
   document.querySelector("#verifyFranchiseCode").addEventListener("click", () => {
