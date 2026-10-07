@@ -7,7 +7,7 @@ app.innerHTML = `
       <span>동네에서 함께 사는 즐거움</span>
       <nav class="utility-links" aria-label="서비스 메뉴">
         <a href="?view=franchise-signup">가맹점 가입신청</a>
-        <a href="https://claude.ai/artifact/8XjyU153zPooyw813v1Bam" target="_blank" rel="noopener noreferrer">관리자 로그인</a>
+        <a href="https://superbeanchoi.github.io/09SCM/mock/partner.html" target="_blank" rel="noopener noreferrer">관리자 로그인</a>
       </nav>
     </div>
   </div>
@@ -59,7 +59,7 @@ app.innerHTML = `
     </nav>
     <strong class="drawer-category-title">카테고리</strong>
     <nav class="category-list" id="categoryList" aria-label="카테고리 목록"></nav>
-    <a class="drawer-admin-login" href="https://claude.ai/artifact/8XjyU153zPooyw813v1Bam" target="_blank" rel="noopener noreferrer">관리자 로그인</a>
+    <a class="drawer-admin-login" href="https://superbeanchoi.github.io/09SCM/mock/partner.html" target="_blank" rel="noopener noreferrer">관리자 로그인</a>
     <a class="drawer-franchise-link" href="?view=franchise-signup">가맹점 가입신청</a>
   </aside>
 
