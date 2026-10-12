@@ -2172,10 +2172,9 @@ function renderSignup() {
 }
 
 const franchiseAgreementContents = {
-  service: { title: "09SCM 서비스 이용약관", sections: [["제1조 목적", "본 약관은 09SCM 가맹점 서비스 이용에 필요한 기본 사항을 정하기 위한 목업용 예시 문구입니다."], ["제2조 서비스 이용", "가맹점은 소속 본사의 승인과 필요한 후속 절차를 완료한 뒤 서비스를 이용할 수 있습니다."], ["제3조 이용자의 의무", "이용자는 가입 정보와 사업자 정보를 정확하게 입력하고 계정 정보를 안전하게 관리해야 합니다."]] },
-  privacy: { title: "개인정보 수집·이용 동의", sections: [["수집 항목", "이름, 이메일, 휴대폰번호, 사업자 정보 등 가맹점 가입 심사와 서비스 제공에 필요한 정보를 수집합니다."], ["이용 목적", "본인 확인, 가맹점 가입 심사, 계정 생성, 서비스 이용 안내 및 문의 처리 목적으로 이용합니다."], ["보유 기간", "관련 법령과 운영 정책에서 정한 기간 동안 보관하며 실제 기간은 최종 약관 확정 시 반영합니다."]] },
-  headOffice: { title: "소속 본사에 가입정보 제공 동의", sections: [["제공받는 자", "가입 신청 화면에 표시된 소속 프랜차이즈 본사입니다."], ["제공 항목", "회원정보와 사업자 정보 등 가맹점 가입 심사에 필요한 정보를 제공합니다."], ["제공 목적", "가맹점 가입 심사, 가맹 계약 관리 및 09SCM 서비스 운영을 위해 사용합니다."]] },
-  marketing: { title: "마케팅 정보 수신 동의", sections: [["수신 내용", "09SCM 서비스 소식, 공동구매 상품 및 운영 관련 혜택 안내를 받을 수 있습니다."], ["수신 채널", "문자메시지, 이메일 등 동의한 연락처를 통해 안내할 수 있습니다."], ["동의 철회", "선택 동의 항목으로 동의하지 않아도 가입 신청이 가능하며 추후 철회할 수 있습니다."]] },
+  service: { title: "이용약관 동의", text: "예시 약관입니다. 실제 운영 약관은 별도 검토 후 확정됩니다.\n\n1. 서비스 이용\n- 09SCM은 소속 본사와 가맹점의 상품, 주문, 소매몰 운영을 지원하는 솔루션입니다.\n- 가맹점은 가입 신청 후 소속 본사의 승인을 받아 서비스를 이용할 수 있습니다.\n\n2. 계정 관리\n- 신청자는 정확한 회원정보와 사업자 정보를 입력해야 합니다.\n- 발급된 계정과 비밀번호는 이용자가 안전하게 관리해야 합니다.\n\n3. 결제 및 이용 조건\n- PayApp 가입·연동과 이용료 결제 등 후속 절차는 별도 안내에 따릅니다.\n- 이용 조건이 변경되는 경우 서비스 화면이나 별도 안내를 통해 알립니다.\n\n4. 이용 제한\n- 허위 정보 입력이나 서비스 운영을 방해하는 행위가 확인되면 이용이 제한될 수 있습니다." },
+  privacy: { title: "개인정보처리방침 동의", text: "예시 문안입니다. 실제 개인정보처리방침은 별도 검토 후 확정됩니다.\n\n1. 수집 항목\n- 이름, 아이디, 이메일, 휴대폰번호와 사업자 정보를 신청 과정에서 입력받습니다.\n\n2. 이용 목적\n- 가입 신청 접수, 소속 본사의 승인 검토, 계정 제공 및 서비스 안내에 사용합니다.\n- 소속 본사는 가맹점 승인에 필요한 신청 정보를 확인할 수 있습니다.\n\n3. 보유 및 파기\n- 개인정보는 서비스 제공에 필요한 기간 동안 보유합니다.\n- 이용 목적이 끝나면 관련 법령에 따라 보관해야 하는 정보를 제외하고 파기합니다.\n\n4. 이용자의 권리\n- 이용자는 본인 정보의 열람, 정정, 삭제 등을 요청할 수 있습니다.\n- 필수 정보 제공을 거부하면 가입 신청이 어려울 수 있습니다." },
+  marketing: { title: "마케팅정보 수신동의", text: "예시 문안입니다. 실제 수신동의 내용은 별도 검토 후 확정됩니다.\n\n1. 안내 내용\n- 09SCM의 서비스 소식, 새로운 기능과 운영 관련 혜택을 안내할 수 있습니다.\n\n2. 발송 채널\n- 입력한 휴대폰번호 또는 이메일로 선택적인 안내를 발송할 수 있습니다.\n- 가입 승인 등 필수적인 서비스 안내와는 구분합니다.\n\n3. 선택과 철회\n- 동의하지 않아도 가맹점 가입 신청이 가능합니다.\n- 동의한 뒤에도 언제든 수신을 거부할 수 있습니다." },
 };
 
 function closeFranchiseTermsModal() {
@@ -2196,7 +2195,9 @@ function showFranchiseTermsModal(type, trigger) {
   modal.id = "franchiseTermsModal";
   modal.className = "franchise-terms-modal-backdrop";
   modal.dataset.triggerId = trigger.id;
-  modal.innerHTML = `<section class="franchise-terms-modal" role="dialog" aria-modal="true" aria-labelledby="franchiseTermsTitle"><header class="franchise-terms-heading"><h2 id="franchiseTermsTitle">${agreement.title}</h2><button type="button" data-franchise-terms-close aria-label="닫기">×</button></header><div class="franchise-terms-content"><p class="franchise-terms-placeholder">현재 내용은 목업용 예시이며 추후 확정된 가맹 서비스 약관으로 교체됩니다.</p>${agreement.sections.map(([heading, body]) => `<section><h3>${heading}</h3><p>${body}</p></section>`).join("")}</div><footer><button class="primary-button" type="button" data-franchise-terms-close>확인</button></footer></section>`;
+  modal.innerHTML = `<section class="franchise-terms-modal" role="dialog" aria-modal="true" aria-labelledby="franchiseTermsTitle"><header class="franchise-terms-heading"><h2 id="franchiseTermsTitle"></h2><button type="button" data-franchise-terms-close aria-label="닫기">×</button></header><div class="franchise-terms-content" tabindex="0"></div><footer><button class="primary-button" type="button" data-franchise-terms-close>확인</button></footer></section>`;
+  modal.querySelector("#franchiseTermsTitle").textContent = agreement.title;
+  modal.querySelector(".franchise-terms-content").textContent = agreement.text;
   document.body.appendChild(modal);
   document.body.style.overflow = "hidden";
   modal.querySelectorAll("[data-franchise-terms-close]").forEach((button) => button.addEventListener("click", closeFranchiseTermsModal));
@@ -2229,16 +2230,16 @@ function renderFranchiseSignup() {
           <section class="auth-form-section">
             <div class="auth-section-title"><span>01</span><h2>회원정보</h2></div>
             <div class="auth-form-grid">
-              <label class="auth-field"><span>이름 *</span><input name="memberName" type="text" placeholder="이름을 입력해 주세요." autocomplete="name" required /></label>
+              <label class="auth-field"><span>이름 *</span><input name="memberName" type="text" placeholder="이름 입력" autocomplete="name" required /></label>
               <label class="auth-field"><span>이메일 *</span><input name="email" type="email" placeholder="example@email.com" autocomplete="email" required /></label>
             </div>
-            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="4" pattern="[A-Za-z0-9]{4,}" placeholder="영문·숫자 4자리 이상" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">해당 아이디로 개별 소매몰 URL이 생성됩니다. (예: 아이디.09scm.com)</small></label>
+            <label class="auth-field"><span>아이디 *</span><span class="inline-field"><input id="franchiseUserId" name="userId" type="text" minlength="3" maxlength="20" pattern="[a-z][a-z0-9]{2,19}" title="영문 소문자로 시작하는 영문·숫자 조합 3~20자로 입력해 주세요." placeholder="영문 소문자로 시작하는 영문·숫자 조합 3~20자" autocomplete="username" required /><button class="secondary-button" id="checkFranchiseUserId" type="button">중복 확인</button></span><small class="field-message" id="franchiseUserIdMessage">※ 아이디는 소매몰 주소(아이디.09scm.com)와 관리자 로그인에 사용되며, 승인 후 변경할 수 없습니다.</small></label>
             <div class="auth-form-grid">
               <label class="auth-field"><span>비밀번호 *</span><span class="password-field"><input id="franchisePassword" name="password" type="password" minlength="8" placeholder="영문·숫자 조합 8자 이상" autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePassword" aria-label="비밀번호 보기">보기</button></span></label>
-              <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="franchisePasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호를 다시 입력해 주세요." autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
+              <label class="auth-field"><span>비밀번호 확인 *</span><span class="password-field"><input id="franchisePasswordConfirm" name="passwordConfirm" type="password" minlength="8" placeholder="비밀번호 확인 입력" autocomplete="new-password" required /><button type="button" data-password-toggle="franchisePasswordConfirm" aria-label="비밀번호 보기">보기</button></span></label>
             </div>
             <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field"><input id="franchisePhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendFranchiseCode" type="button">인증번호 발송</button></span></label>
-            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="franchiseCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="숫자 6자리" required /><button class="secondary-button" id="verifyFranchiseCode" type="button">인증하기</button></span><small class="field-message" id="franchisePhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
+            <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="franchiseCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="인증번호 입력" required /><button class="secondary-button" id="verifyFranchiseCode" type="button">인증하기</button></span><small class="field-message" id="franchisePhoneMessage"></small></label>
           </section>
 
           <section class="auth-form-section">
@@ -2249,8 +2250,8 @@ function renderFranchiseSignup() {
               <label><input type="radio" name="businessType" value="corporation" /> 법인사업자</label>
             </fieldset>
             <div class="auth-form-grid">
-              <label class="auth-field"><span id="businessNameLabel">상호명 *</span><input name="businessName" type="text" placeholder="사업자등록증의 상호명을 입력해 주세요." required /></label>
-              <label class="auth-field"><span>대표자명 *</span><input name="representativeName" type="text" placeholder="대표자명을 입력해 주세요." required /></label>
+              <label class="auth-field"><span>상호명/법인명 *</span><input name="businessName" type="text" placeholder="상호명/법인명 입력" required /></label>
+              <label class="auth-field"><span>대표자명 *</span><input name="representativeName" type="text" placeholder="대표자명 입력" required /></label>
             </div>
             <label class="auth-field"><span>사업자등록번호 *</span><span class="inline-field"><input id="businessNumber" name="businessNumber" type="text" inputmode="numeric" maxlength="12" pattern="[0-9]{3}-[0-9]{2}-[0-9]{5}" placeholder="000-00-00000" required /><button class="secondary-button" id="verifyBusinessNumber" type="button">사업자 인증</button></span><small class="field-message" id="businessNumberMessage">사업자등록번호 인증이 필요합니다.</small></label>
             <label class="auth-field corporation-only" id="corporationNumberField" hidden><span>법인등록번호 *</span><input id="corporationNumber" name="corporationNumber" type="text" inputmode="numeric" maxlength="14" pattern="[0-9]{6}-[0-9]{7}" placeholder="000000-0000000" /></label>
@@ -2260,16 +2261,15 @@ function renderFranchiseSignup() {
             </div>
             <label class="auth-field"><span>사업장 주소 *</span><span class="inline-field address-search-field"><input id="businessPostalCode" name="postalCode" type="text" placeholder="우편번호" readonly required /><button class="secondary-button" id="findBusinessAddress" type="button">주소 찾기</button></span></label>
             <label class="auth-field"><span class="visually-hidden">기본주소</span><input id="businessAddress" name="businessAddress" type="text" placeholder="기본주소" readonly required /></label>
-            <label class="auth-field"><span class="visually-hidden">상세주소</span><input name="businessAddressDetail" type="text" placeholder="상세주소를 입력해 주세요." required /></label>
+            <label class="auth-field"><span class="visually-hidden">상세주소</span><input name="businessAddressDetail" type="text" placeholder="상세주소" required /></label>
           </section>
 
           <section class="auth-form-section agreement-list">
             <div class="auth-section-title"><span>03</span><h2>서비스 이용 및 약관 동의</h2></div>
             <label class="auth-checkbox agreement-all"><input id="franchiseAgreeAll" type="checkbox" /><span>전체 동의</span></label>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeServiceTerms" type="checkbox" required /><span>09SCM 서비스 이용약관 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="service">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span>개인정보 수집·이용 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="privacy">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeHeadOffice" type="checkbox" required /><span>소속 본사에 가입정보 제공 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="headOffice">보기</button></div>
-            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeMarketing" type="checkbox" /><span>마케팅 정보 수신 동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="marketing">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeServiceTerms" type="checkbox" required /><span>이용약관 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="service">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreePrivacy" type="checkbox" required /><span>개인정보처리방침 동의 *</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="privacy">보기</button></div>
+            <div class="agreement-row"><label class="auth-checkbox"><input name="agreeMarketing" type="checkbox" /><span>마케팅정보 수신동의</span></label><button class="agreement-detail-button" type="button" data-franchise-terms="marketing">보기</button></div>
           </section>
 
           <div class="franchise-form-actions">
@@ -2291,19 +2291,19 @@ function renderFranchiseSignup() {
   const businessNumberMessage = document.querySelector("#businessNumberMessage");
   const corporationNumberField = document.querySelector("#corporationNumberField");
   const corporationNumberInput = document.querySelector("#corporationNumber");
-  const businessNameLabel = document.querySelector("#businessNameLabel");
-  const franchiseIdGuide = "해당 아이디로 개별 소매몰 URL이 생성됩니다. (예: 아이디.09scm.com)";
+  const franchiseIdGuide = "※ 아이디는 소매몰 주소(아이디.09scm.com)와 관리자 로그인에 사용되며, 승인 후 변경할 수 없습니다.";
   let userIdChecked = false;
   let phoneVerified = false;
   let businessVerified = false;
 
   document.querySelector("#checkFranchiseUserId").addEventListener("click", () => {
-    if (!/^[A-Za-z0-9]{4,}$/.test(userIdInput.value)) return showToast("아이디 입력 형식을 확인해 주세요.");
+    if (!/^[a-z][a-z0-9]{2,19}$/.test(userIdInput.value)) return showToast("영문 소문자로 시작하는 영문·숫자 조합 3~20자로 입력해 주세요.");
     userIdChecked = true;
     userIdMessage.textContent = `사용할 수 있는 아이디입니다. ${franchiseIdGuide}`;
     userIdMessage.classList.add("is-success");
   });
   userIdInput.addEventListener("input", () => {
+    userIdInput.value = userIdInput.value.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 20);
     userIdChecked = false;
     userIdMessage.textContent = franchiseIdGuide;
     userIdMessage.classList.remove("is-success");
@@ -2351,7 +2351,6 @@ function renderFranchiseSignup() {
       const isCorporation = radio.value === "corporation";
       corporationNumberField.hidden = !isCorporation;
       corporationNumberInput.required = isCorporation;
-      businessNameLabel.textContent = isCorporation ? "법인명 *" : "상호명 *";
     });
   });
   document.querySelector("#findBusinessAddress").addEventListener("click", () => {
