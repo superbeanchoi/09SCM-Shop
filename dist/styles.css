@@ -1598,11 +1598,11 @@ img { display: block; max-width: 100%; }
 .franchise-modal-actions .primary-button,
 .franchise-modal-actions .secondary-button { min-height: 48px; }
 .franchise-terms-modal-backdrop { position: fixed; z-index: 320; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / 48%); padding: 24px; }
-.franchise-terms-modal { display: grid; width: min(100%, 640px); max-height: min(760px, calc(100vh - 48px)); grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; border-radius: 6px; background: var(--surface); box-shadow: 0 14px 36px rgb(0 0 0 / 18%); }
+.franchise-terms-modal { display: grid; width: min(100%, 640px); height: min(640px, calc(100vh - 48px)); max-height: calc(100vh - 48px); grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; border-radius: 6px; background: var(--surface); box-shadow: 0 14px 36px rgb(0 0 0 / 18%); }
 .franchise-terms-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--border); padding: 20px 24px; }
 .franchise-terms-heading h2 { margin: 0; font-size: 20px; }
 .franchise-terms-heading button { width: 36px; height: 36px; flex: 0 0 auto; border: 0; border-radius: 4px; background: var(--soft-surface); color: var(--text-secondary); font-size: 22px; cursor: pointer; }
-.franchise-terms-content { max-height: min(440px, 55vh); overflow-y: auto; overscroll-behavior: contain; padding: 24px; color: var(--text-secondary); line-height: 1.75; white-space: pre-wrap; }
+.franchise-terms-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; color: var(--text-body); font-size: 14px; line-height: 1.75; white-space: pre-wrap; }
 .franchise-terms-modal footer { display: flex; justify-content: flex-end; border-top: 1px solid var(--border); padding: 16px 24px; }
 .franchise-terms-modal footer button { min-width: 112px; min-height: 44px; }
 
@@ -1619,7 +1619,7 @@ img { display: block; max-width: 100%; }
   .franchise-complete-modal { padding: 30px 22px 22px; }
   .franchise-modal-actions { grid-template-columns: 1fr; }
   .franchise-terms-modal-backdrop { align-items: end; padding: 0; }
-  .franchise-terms-modal { width: 100%; max-height: 86vh; border-radius: 6px 6px 0 0; }
+  .franchise-terms-modal { width: 100%; height: min(640px, 86vh); max-height: 86vh; border-radius: 6px 6px 0 0; }
   .franchise-terms-heading { padding: 18px 16px; }
   .franchise-terms-content { padding: 20px 16px; }
   .franchise-terms-modal footer { padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); }
