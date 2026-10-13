@@ -2197,9 +2197,39 @@ function renderSignup() {
     data.phone = phoneDigits(data.phone);
     localStorage.setItem("onmaeul-member", JSON.stringify(data));
     localStorage.setItem("onmaeul-login", JSON.stringify({ phone: data.phone, keepLogin: true }));
-    showToast("회원가입이 완료되었습니다.");
-    window.setTimeout(() => { window.location.href = "./index.html"; }, 600);
+    sessionStorage.setItem("onmaeul-signup-complete", JSON.stringify({ nicknameCode: data.nicknameCode, chatNickname: data.chatNickname }));
+    window.location.href = "?view=signup-complete";
   });
+}
+
+function renderSignupComplete() {
+  let signupInfo;
+  try { signupInfo = JSON.parse(sessionStorage.getItem("onmaeul-signup-complete")); } catch {}
+  if (!signupInfo) {
+    try {
+      const savedMember = JSON.parse(localStorage.getItem("onmaeul-member"));
+      if (savedMember) signupInfo = { nicknameCode: savedMember.nicknameCode, chatNickname: savedMember.chatNickname };
+    } catch {}
+  }
+  // Allow the standalone mockup page to be previewed before a signup has been submitted.
+  signupInfo ||= { nicknameCode: "1111", chatNickname: "사과맘" };
+  const nicknameCode = escapeText(signupInfo.nicknameCode || "1111");
+  const chatNickname = String(signupInfo.chatNickname || "").trim();
+  pageContent.innerHTML = `
+    <section class="site-width signup-complete-page">
+      <div class="signup-complete-card">
+        <h1>회원가입이 완료되었습니다.</h1>
+        <p class="signup-complete-intro">동네에서 함께 사는 즐거움,<br />이웃과 함께 필요한 상품을 공동구매해 보세요.</p>
+        <div class="signup-complete-info">
+          <div class="signup-complete-row"><span>회원주문 코드</span><strong class="signup-complete-code">${nicknameCode}</strong></div>
+          ${chatNickname ? `<div class="signup-complete-row"><span>채팅주문 닉네임</span><strong>${escapeText(chatNickname)}</strong></div>` : ""}
+          <p>${chatNickname
+            ? "회원주문 코드와 채팅주문 닉네임으로 채팅에서도 간편하게 주문할 수 있습니다. 이용 방법은 판매자에게 문의해 주세요."
+            : "회원주문 코드는 간편 주문 조회에 사용할 수 있습니다."}</p>
+        </div>
+        <a class="primary-button signup-complete-home" href="./index.html">메인으로</a>
+      </div>
+    </section>`;
 }
 
 const franchiseAgreementContents = {
@@ -2534,6 +2564,7 @@ function renderPage() {
   else if (view === "order-complete") renderOrderComplete();
   else if (view === "login") renderLogin();
   else if (view === "signup") renderSignup();
+  else if (view === "signup-complete") renderSignupComplete();
   else if (view === "franchise-signup") renderFranchiseSignup();
   else if (view === "reset-password") renderPasswordReset();
   else if (view === "terms") renderPolicyPage("terms");

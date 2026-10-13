@@ -1504,6 +1504,25 @@ img { display: block; max-width: 100%; }
 .auth-page { display: flex; justify-content: center; padding: 48px 24px 72px; }
 .auth-card { width: min(100%, 620px); border: 1px solid var(--border); border-radius: 6px; background: var(--surface); padding: 36px; }
 .auth-card-small { width: min(100%, 480px); }
+.signup-complete-page { display: flex; justify-content: center; padding: 64px 24px 88px; }
+.signup-complete-card { width: min(100%, 620px); border: 1px solid var(--border); border-radius: 6px; background: var(--surface); padding: 48px 40px; text-align: center; }
+.signup-complete-card h1 { margin: 0; font-size: 24px; }
+.signup-complete-intro { margin: 14px 0 30px; color: var(--text-secondary); font-size: 16px; line-height: 1.7; }
+.signup-complete-info { border: 1px solid var(--border); border-radius: 6px; background: var(--soft-surface); padding: 24px; text-align: left; }
+.signup-complete-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; }
+.signup-complete-row + .signup-complete-row { border-top: 1px solid var(--border); }
+.signup-complete-row span { color: var(--text-secondary); font-size: 14px; }
+.signup-complete-row strong { font-size: 16px; }
+.signup-complete-row .signup-complete-code { color: var(--key-color); font-size: 24px; letter-spacing: 0.12em; }
+.signup-complete-info p { margin: 14px 0 0; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+.signup-complete-home { min-width: 200px; min-height: 46px; margin-top: 28px; text-decoration: none; }
+@media (max-width: 720px) {
+  .signup-complete-page { padding: 24px 14px 56px; }
+  .signup-complete-card { padding: 36px 20px; }
+  .signup-complete-intro { font-size: 14px; }
+  .signup-complete-info { padding: 20px 16px; }
+  .signup-complete-home { width: 100%; }
+}
 .auth-heading { margin-bottom: 30px; text-align: center; }
 .auth-heading > span { color: var(--key-color); font-size: 12px; font-weight: 700; }
 .auth-heading h1 { margin: 7px 0 8px; font-size: 24px; }
