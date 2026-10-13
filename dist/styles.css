@@ -1507,6 +1507,7 @@ img { display: block; max-width: 100%; }
 .signup-complete-page { padding: 28px 24px 72px; }
 .signup-complete-page .completion-hero { margin: 20px auto 36px; }
 .signup-complete-details { max-width: 720px; margin: 0 auto; }
+.signup-complete-page .completion-actions { display: flex; justify-content: center; }
 .signup-complete-details .completion-info > div { grid-template-columns: 140px minmax(0, 1fr); }
 .signup-complete-details .completion-info dt { white-space: nowrap; }
 .signup-complete-note { margin: 18px 0 0; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-secondary); line-height: 1.6; }
