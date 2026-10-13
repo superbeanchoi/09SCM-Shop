@@ -2217,18 +2217,22 @@ function renderSignupComplete() {
   const chatNickname = String(signupInfo.chatNickname || "").trim();
   pageContent.innerHTML = `
     <section class="site-width signup-complete-page">
-      <div class="signup-complete-card">
+      <div class="completion-hero">
+        <span class="completion-check" aria-hidden="true">✓</span>
         <h1>회원가입이 완료되었습니다.</h1>
-        <p class="signup-complete-intro">동네에서 함께 사는 즐거움,<br />이웃과 함께 필요한 상품을 공동구매해 보세요.</p>
-        <div class="signup-complete-info">
-          <div class="signup-complete-row"><span>회원주문 코드</span><strong class="signup-complete-code">${nicknameCode}</strong></div>
-          ${chatNickname ? `<div class="signup-complete-row"><span>채팅주문 닉네임</span><strong>${escapeText(chatNickname)}</strong></div>` : ""}
-          <p>${chatNickname
-            ? "회원주문 코드와 채팅주문 닉네임으로 채팅에서도 간편하게 주문할 수 있습니다. 이용 방법은 판매자에게 문의해 주세요."
-            : "회원주문 코드는 간편 주문 조회에 사용할 수 있습니다."}</p>
-        </div>
-        <a class="primary-button signup-complete-home" href="./index.html">메인으로</a>
+        <p>동네에서 함께 사는 즐거움,<br />이웃과 함께 필요한 상품을 공동구매해 보세요.</p>
       </div>
+      <section class="completion-card signup-complete-details">
+        <h2>회원정보</h2>
+        <dl class="completion-info">
+          <div><dt>회원주문 코드</dt><dd>${nicknameCode}</dd></div>
+          ${chatNickname ? `<div><dt>채팅주문 닉네임</dt><dd>${escapeText(chatNickname)}</dd></div>` : ""}
+        </dl>
+        <p class="signup-complete-note">${chatNickname
+          ? "회원주문 코드와 채팅주문 닉네임으로 채팅에서도 간편하게 주문할 수 있습니다. 이용 방법은 판매자에게 문의해 주세요."
+          : "회원주문 코드는 간편 주문 조회에 사용할 수 있습니다."}</p>
+      </section>
+      <div class="completion-actions"><a class="primary-button" href="./index.html">메인으로</a></div>
     </section>`;
 }
 
