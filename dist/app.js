@@ -2068,7 +2068,7 @@ function renderSignup() {
         <form id="signupForm" class="auth-form auth-form-long">
           <section class="auth-form-section">
             <div class="auth-section-title"><span>01</span><h2>휴대폰번호 인증</h2></div>
-            <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field"><input id="signupPhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="sendSignupCode" type="button">인증번호 발송</button></span></label>
+            <label class="auth-field"><span>휴대폰번호 *</span><span class="inline-field signup-phone-field"><input id="signupPhone" name="phone" type="tel" placeholder="010-0000-0000" autocomplete="tel" required /><button class="secondary-button" id="checkSignupPhone" type="button">중복확인</button><button class="secondary-button" id="sendSignupCode" type="button" disabled>인증번호 발송</button></span><small class="field-message" id="signupDuplicateMessage">휴대폰번호 중복확인이 필요합니다.</small></label>
             <label class="auth-field"><span>인증번호 *</span><span class="inline-field"><input id="signupCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="숫자 6자리" /><button class="secondary-button" id="verifySignupCode" type="button">확인</button></span><small class="field-message" id="signupPhoneMessage">목업에서는 숫자 6자리를 입력하면 인증됩니다.</small></label>
           </section>
 
@@ -2112,17 +2112,46 @@ function renderSignup() {
   bindPasswordToggles();
   const form = document.querySelector("#signupForm");
   const phoneMessage = document.querySelector("#signupPhoneMessage");
+  const duplicateMessage = document.querySelector("#signupDuplicateMessage");
+  const phoneInput = document.querySelector("#signupPhone");
+  const sendSignupCode = document.querySelector("#sendSignupCode");
   const aliasMessage = document.querySelector("#aliasMessage");
   let phoneVerified = false;
+  let checkedPhone = "";
+  let codeSentPhone = "";
   let aliasChecked = false;
-  document.querySelector("#signupPhone").addEventListener("input", () => {
+  phoneInput.addEventListener("input", () => {
+    checkedPhone = "";
+    codeSentPhone = "";
     phoneVerified = false;
+    sendSignupCode.disabled = true;
+    document.querySelector("#signupCode").value = "";
+    duplicateMessage.textContent = "휴대폰번호 중복확인이 필요합니다.";
+    duplicateMessage.classList.remove("is-success");
     phoneMessage.textContent = "휴대폰번호 인증이 필요합니다.";
     phoneMessage.classList.remove("is-success");
   });
-  document.querySelector("#sendSignupCode").addEventListener("click", () => {
-    const phone = phoneDigits(document.querySelector("#signupPhone").value);
+  document.querySelector("#checkSignupPhone").addEventListener("click", () => {
+    const phone = phoneDigits(phoneInput.value);
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
+    let savedPhone = "";
+    try { savedPhone = phoneDigits(JSON.parse(localStorage.getItem("onmaeul-member"))?.phone); } catch {}
+    if ([noOrderDemoMember.phone, "01012345678", savedPhone].includes(phone)) {
+      checkedPhone = "";
+      sendSignupCode.disabled = true;
+      duplicateMessage.textContent = "이미 가입된 휴대폰번호입니다.";
+      duplicateMessage.classList.remove("is-success");
+      return;
+    }
+    checkedPhone = phone;
+    sendSignupCode.disabled = false;
+    duplicateMessage.textContent = "사용 가능한 휴대폰번호입니다.";
+    duplicateMessage.classList.add("is-success");
+  });
+  sendSignupCode.addEventListener("click", () => {
+    const phone = phoneDigits(phoneInput.value);
+    if (checkedPhone !== phone) return showToast("휴대폰번호 중복확인을 먼저 완료해 주세요.");
+    codeSentPhone = phone;
     phoneVerified = false;
     phoneMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
     phoneMessage.classList.remove("is-success");
@@ -2134,6 +2163,7 @@ function renderSignup() {
     phoneMessage.classList.remove("is-success");
   });
   document.querySelector("#verifySignupCode").addEventListener("click", () => {
+    if (!codeSentPhone || codeSentPhone !== phoneDigits(phoneInput.value)) return showToast("인증번호를 먼저 발송해 주세요.");
     if (!/^\d{6}$/.test(document.querySelector("#signupCode").value)) return showToast("인증번호 6자리를 입력해 주세요.");
     phoneVerified = true;
     phoneMessage.textContent = "휴대폰번호 인증이 완료되었습니다.";
@@ -2158,6 +2188,7 @@ function renderSignup() {
   requiredAgreements.forEach((input) => input.addEventListener("change", () => { agreeAll.checked = requiredAgreements.every((item) => item.checked); }));
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    if (checkedPhone !== phoneDigits(phoneInput.value)) return showToast("휴대폰번호 중복확인을 완료해 주세요.");
     if (!phoneVerified) return showToast("휴대폰번호 인증을 완료해 주세요.");
     if (!aliasChecked) return showToast("회원주문 코드 중복 확인을 완료해 주세요.");
     if (form.elements.password.value !== form.elements.passwordConfirm.value) return showToast("비밀번호가 일치하지 않습니다.");

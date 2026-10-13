@@ -1537,6 +1537,8 @@ img { display: block; max-width: 100%; }
 .auth-field input:focus { border-color: var(--key-color); outline: 0; }
 .inline-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
 .inline-field .secondary-button { min-width: 112px; height: 44px; }
+.signup-phone-field { grid-template-columns: minmax(0, 1fr) auto auto; }
+.signup-phone-field .secondary-button:disabled { color: #a5a5a5; background: #f4f4f4; cursor: not-allowed; }
 .password-field { position: relative; display: block; }
 .password-field > input { padding-right: 66px; }
 .password-field > button { position: absolute; top: 0; right: 0; width: 62px; height: 44px; border: 0; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 700; }
@@ -1626,8 +1628,15 @@ img { display: block; max-width: 100%; }
   .franchise-terms-modal footer button { width: 100%; }
 }
 
+@media (max-width: 520px) {
+  .signup-phone-field { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .signup-phone-field > input { grid-column: 1 / -1; }
+  .signup-phone-field .secondary-button { min-width: 0; width: 100%; padding: 0 8px; }
+}
+
 @media (max-width: 390px) {
   .inline-field { grid-template-columns: 1fr; }
+  .signup-phone-field { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .inline-field .secondary-button { width: 100%; }
   .optional-section { padding: 18px 14px; }
 }
