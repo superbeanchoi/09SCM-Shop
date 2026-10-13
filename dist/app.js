@@ -1384,8 +1384,8 @@ function renderMyInfo() {
         </div>
       </section>
       <section class="mypage-panel">
-        <h3>회원주문 코드</h3>
-        <p class="mypage-section-copy">주문 확인과 현장 수령 시 본인확인에 사용하는 숫자 4자리 코드입니다.</p>
+        <h3>회원 주문정보</h3>
+        <p class="mypage-section-copy">주문 확인과 현장 수령 시 본인확인에 사용하는 정보입니다.</p>
         <label class="auth-field">
           <span>회원주문 코드 *</span>
           <span class="inline-field">
