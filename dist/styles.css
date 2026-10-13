@@ -332,6 +332,7 @@ img { display: block; max-width: 100%; }
 .info-item > span { margin-bottom: 5px; color: var(--text-secondary); font-size: 12px; }
 .info-item strong,
 .info-item a { overflow: hidden; font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.pickup-address strong { overflow: visible; text-overflow: clip; white-space: normal; word-break: keep-all; }
 .info-item a:hover { color: var(--key-color); }
 
 .bank-info > div { display: flex; min-width: 0; align-items: center; gap: 8px; }
@@ -635,13 +636,23 @@ img { display: block; max-width: 100%; }
 
 .toast.is-visible { transform: translateY(0); opacity: 1; }
 
-@media (max-width: 1023px) {
-  .store-info-grid { grid-template-columns: repeat(3, 1fr); padding: 16px 24px; gap: 1px; }
+@media (max-width: 1199px) {
+  .store-info-grid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.4fr) minmax(0, .85fr); padding: 16px 24px; gap: 1px; }
   .info-item { min-height: 76px; border: 1px solid var(--border); margin: 0 -1px -1px 0; padding: 12px 14px; }
   .info-item:first-child { border-left: 1px solid var(--border); }
   .bank-info { grid-column: span 2; }
+}
+
+@media (max-width: 1023px) {
   .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .availability-section .product-card:nth-child(n + 4) { display: none; }
+}
+
+@media (min-width: 721px) and (max-width: 1023px) {
+  .header-inner { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; padding: 0 16px; }
+  .store-brand { min-width: 0; }
+  .header-right { gap: 0; }
+  .header-action { flex: 0 0 auto; padding: 0 6px; white-space: nowrap; }
 }
 
 @media (max-width: 720px) {
@@ -692,10 +703,12 @@ img { display: block; max-width: 100%; }
   .featured-section { padding-top: 28px; }
   .section-heading,
   .page-heading { align-items: flex-start; margin-bottom: 18px; }
+  .section-heading { gap: 8px; }
+  .section-heading > div { min-width: 0; }
   .section-heading h1,
   .page-heading h1 { font-size: 20px; }
   .section-heading p { font-size: 12px; }
-  .section-heading > a { font-size: 12px; }
+  .section-heading > a { flex: 0 0 auto; font-size: 12px; white-space: nowrap; }
 
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
   .availability-section .product-card:nth-child(n + 4) { display: block; }

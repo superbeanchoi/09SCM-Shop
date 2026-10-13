@@ -663,7 +663,7 @@ function renderMain() {
       <h1 id="storeInfoTitle" class="sr-only">매장 정보</h1>
       <div class="site-width store-info-grid">
         <div class="info-item"><span>상호</span><strong>온마을 공동구매</strong></div>
-        <div class="info-item"><span>픽업 주소</span><strong>경기 수원시 영통구 온마을로 27, 1층</strong></div>
+        <div class="info-item pickup-address"><span>픽업 주소</span><strong>경기 수원시 영통구 온마을로 27, 1층</strong></div>
         <div class="info-item"><span>문의 전화</span><a href="tel:0312050927">031-205-0927</a></div>
         <div class="info-item"><span>영업시간</span><strong>매일 10:00–20:00</strong></div>
         <div class="info-item bank-info">
