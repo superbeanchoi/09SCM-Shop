@@ -1507,10 +1507,13 @@ img { display: block; max-width: 100%; }
 .signup-complete-page { padding: 28px 24px 72px; }
 .signup-complete-page .completion-hero { margin: 20px auto 36px; }
 .signup-complete-details { max-width: 720px; margin: 0 auto; }
+.signup-complete-details .completion-info > div { grid-template-columns: 140px minmax(0, 1fr); }
+.signup-complete-details .completion-info dt { white-space: nowrap; }
 .signup-complete-note { margin: 18px 0 0; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-secondary); line-height: 1.6; }
 @media (max-width: 720px) {
   .signup-complete-page { padding: 18px 14px 48px; }
   .signup-complete-page .completion-hero { margin-top: 8px; }
+  .signup-complete-details .completion-info > div { grid-template-columns: 118px minmax(0, 1fr); }
 }
 .auth-heading { margin-bottom: 30px; text-align: center; }
 .auth-heading > span { color: var(--key-color); font-size: 12px; font-weight: 700; }
