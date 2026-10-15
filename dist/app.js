@@ -668,7 +668,7 @@ function renderMain() {
         <div class="info-item"><span>영업시간</span><strong>매일 10:00–20:00</strong></div>
         <div class="info-item bank-info">
           <span>계좌이체</span>
-          <div><strong id="bankAccount">국민 123456-01-123456 · 온마을마켓</strong><button class="copy-button" id="copyAccount" type="button">복사</button></div>
+          <div><strong id="bankAccount">신한은행 110123456789 · 우리마켓(주)</strong><button class="copy-button" id="copyAccount" type="button">복사</button></div>
         </div>
       </div>
     </section>
@@ -1094,7 +1094,7 @@ function renderOrder() {
             </div>
             <div id="deliveryPayment" class="delivery-payment" hidden><strong>카드결제</strong></div>
             <div id="transferFields" class="transfer-panel" hidden>
-              <div class="transfer-field"><span>입금계좌</span><strong>국민 123456-01-123456 · 온마을마켓</strong></div>
+              <div class="transfer-field"><span>입금계좌</span><strong>신한은행 110123456789 · 우리마켓(주)</strong></div>
               <label class="transfer-field"><span>입금자명</span><input id="depositorName" type="text" placeholder="입금자명을 입력해 주세요." /></label>
             </div>
           </section>
@@ -1233,7 +1233,7 @@ function renderOrderComplete() {
           <section class="completion-card"><h2>주문상품</h2><div class="completion-list">${order.items.map((item) => `<div><span><small>${escapeText(item.category1)} &gt; ${escapeText(item.category2)}</small><b>${escapeText(item.name)}</b><small>수량 ${item.quantity}개</small>${!isDelivery ? `<small>${pickupPeriodText(item.pickupStart, item.pickupEnd)} 픽업</small>` : ""}</span><strong>${formatPrice(item.price * item.quantity)}</strong></div>`).join("")}</div></section>
           <section class="completion-card"><h2>주문자 정보</h2><dl class="completion-info"><div><dt>주문자명</dt><dd>${escapeText(order.customerName)}</dd></div><div><dt>휴대폰번호</dt><dd>${formatPhone(order.phone)}</dd></div><div><dt>회원주문 코드</dt><dd>${escapeText(order.nicknameCode || "-")}</dd></div></dl></section>
           <section class="completion-card"><h2>${isDelivery ? "배달 정보" : "픽업 정보"}</h2><dl class="completion-info">${isDelivery ? `<div><dt>배달지</dt><dd>${order.deliveryAddressName ? `<b>${escapeText(order.deliveryAddressName)}</b><br />` : ""}${escapeText(order.deliveryAddress)}</dd></div>${order.deliveryRequest ? `<div><dt>요청사항</dt><dd>${escapeText(order.deliveryRequest)}</dd></div>` : ""}` : `<div><dt>픽업 장소</dt><dd>온마을 공동구매<br />경기 수원시 영통구 온마을로 27, 1층</dd></div><div><dt>공통 픽업가능일</dt><dd>${pickupPeriodText(order.pickupWindow?.start, order.pickupWindow?.end)}</dd></div>${order.pickupRequest ? `<div><dt>요청사항</dt><dd>${escapeText(order.pickupRequest)}</dd></div>` : ""}`}</dl></section>
-          <section class="completion-card"><h2>결제 정보</h2><dl class="completion-info"><div><dt>결제수단</dt><dd>${paymentName}</dd></div>${order.payment === "transfer" ? `<div><dt>입금계좌</dt><dd>국민 123456-01-123456 · 온마을마켓</dd></div><div><dt>입금자명</dt><dd>${escapeText(order.depositorName)}</dd></div>` : ""}</dl></section>
+          <section class="completion-card"><h2>결제 정보</h2><dl class="completion-info"><div><dt>결제수단</dt><dd>${paymentName}</dd></div>${order.payment === "transfer" ? `<div><dt>입금계좌</dt><dd>신한은행 110123456789 · 우리마켓(주)</dd></div><div><dt>입금자명</dt><dd>${escapeText(order.depositorName)}</dd></div>` : ""}</dl></section>
         </div>
         <aside class="completion-card completion-payment"><h2>결제금액</h2><div><span>상품금액</span><strong>${formatPrice(order.productTotal)}</strong></div>${isDelivery ? `<div><span>배달비</span><strong>${formatPrice(order.deliveryFee)}</strong></div>` : ""}<div class="completion-payment-total"><span>최종 결제금액</span><strong>${formatPrice(order.finalTotal)}</strong></div></aside>
       </div>
@@ -1988,7 +1988,7 @@ function renderOrderDetail(params) {
     <section class="order-detail-section order-detail-payment">
       <h3>결제 정보</h3>
       <div class="order-payment-layout">
-        <dl class="order-detail-info"><div><dt>결제수단</dt><dd>${paymentMethodName(order.payment)}</dd></div><div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</span></dd></div>${order.payment === "transfer" ? "<div><dt>입금계좌</dt><dd>국민 123456-01-123456 · 온마을마켓</dd></div>" : ""}</dl>
+        <dl class="order-detail-info"><div><dt>결제수단</dt><dd>${paymentMethodName(order.payment)}</dd></div><div><dt>결제상태</dt><dd><span class="status-badge ${statusClass(order.paymentStatus)}">${order.paymentStatus}</span></dd></div>${order.payment === "transfer" ? "<div><dt>입금계좌</dt><dd>신한은행 110123456789 · 우리마켓(주)</dd></div>" : ""}</dl>
         <dl class="order-payment-total"><div><dt>상품금액</dt><dd>${formatPrice(totals.productTotal)}</dd></div>${isDelivery ? `<div><dt>배달비</dt><dd>${formatPrice(totals.deliveryFee)}</dd></div>` : ""}<div><dt>최종 결제금액</dt><dd>${formatPrice(totals.finalTotal)}</dd></div></dl>
       </div>
     </section>

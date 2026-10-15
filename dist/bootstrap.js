@@ -71,7 +71,7 @@ app.innerHTML = `
     <div class="site-width footer-inner">
       <div class="footer-business">
         <div>
-          <span>상호명 <strong>온마을마켓</strong></span>
+          <span>상호명 <strong>우리마켓 본사</strong></span>
           <span>대표자명 <strong>김하늘</strong></span>
           <span>사업자등록번호 <strong>123-45-67890</strong></span>
           ${telecomSalesRegistrationNumber ? `<span>통신판매업 신고번호 <strong>${String(telecomSalesRegistrationNumber).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character])}</strong></span>` : ""}
@@ -86,6 +86,6 @@ app.innerHTML = `
 `;
 
 const logic = document.createElement("script");
-logic.src = "./app.js?v=20261013-24";
+logic.src = "./app.js?v=20261015-1";
 document.body.appendChild(logic);
 
