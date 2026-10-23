@@ -39,6 +39,42 @@ products.forEach((product) => {
 
 const mockOrders = [
   {
+    orderNumber: "OM260915-111001",
+    orderedAt: "2026.09.15",
+    orderedTime: "오전 11:10",
+    items: [{ id: 2, quantity: 1 }],
+    fulfillment: "pickup",
+    processStatus: "주문접수",
+    payment: "card",
+    paymentStatus: "결제완료",
+    settled: true,
+    pickupRequest: "요청사항 없음",
+    customerName: "홍길동",
+    phone: "010-1234-5678",
+    nicknameCode: "7942",
+  },
+  {
+    orderNumber: "OM260915-111002",
+    orderedAt: "2026.09.15",
+    orderedTime: "오전 11:20",
+    items: [{ id: 2, quantity: 1 }],
+    fulfillment: "pickup",
+    processStatus: "주문접수",
+    payment: "card",
+    paymentStatus: "환불대기",
+    settled: true,
+    cancelRefundStatus: "취소승인",
+    actionActor: "공급자 직권",
+    requestDate: "2026.09.15 오후 2:00",
+    resolvedAt: "2026.09.15 오후 2:00",
+    refundType: "전체환불",
+    sellerMemo: "재고 부족으로 취소 처리합니다.",
+    pickupRequest: "요청사항 없음",
+    customerName: "홍길동",
+    phone: "010-1234-5678",
+    nicknameCode: "7942",
+  },
+  {
     orderNumber: "OM260914-102913",
     orderedAt: "2026.09.14",
     orderedTime: "오후 2:30",
@@ -1263,6 +1299,7 @@ function orderTotals(order) {
 
 function statusClass(status) {
   if (status === "결제취소") return "is-neutral";
+  if (status === "환불대기") return "is-warning";
   if (["픽업완료", "배달완료", "결제완료"].includes(status) || status.endsWith("승인")) return "is-success";
   if (["결제실패"].includes(status) || status.endsWith("반려")) return "is-error";
   if (["픽업대기", "배달대기", "결제대기"].includes(status) || status.endsWith("요청")) return "is-warning";
@@ -1591,6 +1628,11 @@ function openOrderRequestModal(orderNumber, requestKind) {
   });
   modal.querySelector("#orderRequestForm").addEventListener("submit", (event) => {
     event.preventDefault();
+    if (isDirectCardCancel && order.settled) {
+      closeOrderModal();
+      window.alert("주문을 취소하지 못했습니다. 판매자에게 문의해주세요.");
+      return;
+    }
     const data = new FormData(event.currentTarget);
     order.cancelRefundStatus = isCancel ? (isDirectCancel ? "취소승인" : "취소요청") : "반품요청";
     order.actionActor = isDirectCancel ? "구매자 즉시취소" : "구매자 요청";
