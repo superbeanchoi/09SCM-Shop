@@ -2587,7 +2587,6 @@ function renderPolicyPage(type) {
         <p>시행일 2026년 9월 1일</p>
       </header>
       <section class="policy-current-copy">
-        <h2>시행본</h2>
         <article class="policy-copy-box" aria-label="${title} 시행본"></article>
       </section>
     </section>`;
