@@ -79,13 +79,13 @@ app.innerHTML = `
         </div>
         <nav aria-label="약관 메뉴"><a href="?view=terms">이용약관</a><a class="privacy-link" href="?view=privacy">개인정보처리방침</a></nav>
       </div>
-      <div class="footer-service"><strong>공동구매 운영 솔루션 - 09SCM</strong><a href="https://zero-scm-homepage-mockup.csb62929.chatgpt.site" target="_blank" rel="noreferrer">0SCM 회사소개 →</a></div>
+      <div class="footer-service"><strong>동네에서 함께 사는 즐거움 - 09SCM</strong><a href="https://zero-scm-homepage-mockup.csb62929.chatgpt.site" target="_blank" rel="noreferrer">09SCM 솔루션 소개 →</a></div>
     </div>
   </footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 `;
 
 const logic = document.createElement("script");
-logic.src = "./app.js?v=20261023-1";
+logic.src = "./app.js?v=20261026-1";
 document.body.appendChild(logic);
 
