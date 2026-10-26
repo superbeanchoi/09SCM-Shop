@@ -2577,6 +2577,7 @@ function renderPolicyPage(type) {
         ["제7조 서비스 이용 제한", "서비스 운영을 방해하거나 타인의 권리를 침해하는 행위가 확인될 경우 서비스 이용이 제한될 수 있습니다."],
         ["제8조 기타", "본 약관에서 정하지 않은 사항은 관련 법령과 일반적인 상관례를 따릅니다."],
       ];
+  const policyText = sections.map(([heading, body]) => `${heading}\n${body}`).join("\n\n");
   pageContent.innerHTML = `
     <section class="site-width policy-page">
       <nav class="breadcrumb" aria-label="현재 위치"><a href="./index.html">홈</a><span>›</span><span>${title}</span></nav>
@@ -2585,12 +2586,12 @@ function renderPolicyPage(type) {
         <h1>${title}</h1>
         <p>시행일 2026년 9월 1일</p>
       </header>
-      <div class="policy-placeholder"><strong>임시 안내</strong><p>현재 페이지는 화면 구성을 확인하기 위한 목업용 문구입니다. 정식 운영 전 확정된 내용으로 교체됩니다.</p></div>
-      <article class="policy-content">
-        <p class="policy-intro">온마을 공동구매는 이용자가 서비스를 이해하고 안심하여 이용할 수 있도록 아래 내용을 안내합니다.</p>
-        ${sections.map(([heading, body]) => `<section><h2>${heading}</h2><p>${body}</p></section>`).join("")}
-      </article>
+      <section class="policy-current-copy">
+        <h2>시행본</h2>
+        <article class="policy-copy-box" aria-label="${title} 시행본"></article>
+      </section>
     </section>`;
+  document.querySelector(".policy-copy-box").textContent = policyText;
 }
 
 function renderPage() {
