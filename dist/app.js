@@ -718,13 +718,14 @@ function renderMain() {
         <div class="product-grid">${deliveryAvailable.map(productCard).join("")}</div>
       </section>` : ""}
 
-      <section class="featured-section" aria-labelledby="featuredTitle">
+      ${featured.length ? `<section class="featured-section" aria-labelledby="featuredTitle">
         <div class="section-heading">
           <div><h1 id="featuredTitle">메인 상품</h1><p>지금 주문할 수 있는 상품을 확인해 보세요.</p></div>
           <a href="?view=catalog">전체상품 보기 →</a>
         </div>
         <div class="product-grid">${featured.map(productCard).join("")}</div>
-      </section>
+      </section>` : ""}
+      ${todayPickup.length || deliveryAvailable.length || featured.length ? "" : `<div class="empty-state"><strong>지금 소개할 상품이 없습니다.</strong><a class="secondary-button" href="?view=catalog">전체상품 보기</a></div>`}
     </section>`;
   bindAccountCopy();
 }
