@@ -179,9 +179,10 @@ img { display: block; max-width: 100%; }
 
 .search-panel-inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 560px) auto auto;
+  grid-template-columns: auto minmax(0, 560px) 124px 124px;
+  justify-content: start;
   align-items: center;
-  gap: 10px;
+  gap: 10px 12px;
   padding: 14px 24px;
 }
 
@@ -683,7 +684,7 @@ img { display: block; max-width: 100%; }
   .my-action { max-width: 58px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .search-panel { display: block; }
-  .search-panel-inner { grid-template-columns: 1fr auto; gap: 8px; padding: 10px 16px; }
+  .search-panel-inner { grid-template-columns: 1fr auto; justify-content: stretch; gap: 8px; padding: 10px 16px; }
   .search-panel label,
   .desktop-only { display: none; }
 
