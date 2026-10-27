@@ -30,6 +30,7 @@ function localDateKey(offset = 0) {
 const samplePickupWindows = { 1: [-1, 1], 2: [0, 0], 4: [0, 2], 6: [0, 1], 7: [1, 3], 8: [0, 0], 10: [0, 3], 11: [2, 4], 12: [-2, 7] };
 products.forEach((product) => {
   product.retailExposure = "노출중";
+  product.retailRegisteredAt = product.id;
   const window = samplePickupWindows[product.id];
   if (window && product.saleMethod !== "배달") {
     product.pickupStart = localDateKey(window[0]);
@@ -692,8 +693,11 @@ function productCard(product) {
 
 function renderMain() {
   const featured = products.filter((product) => isRetailExposed(product) && product.featured);
-  const todayPickup = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productIsPickupAvailableOn(product, localDateKey())).slice(0, 4);
-  const deliveryAvailable = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productFulfillmentOptions(product).includes("delivery")).slice(0, 4);
+  const byRecentRegistered = (a, b) => b.retailRegisteredAt - a.retailRegisteredAt;
+  const todayPickup = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productIsPickupAvailableOn(product, localDateKey()))
+    .sort((a, b) => (a.pickupEnd < b.pickupEnd ? -1 : a.pickupEnd > b.pickupEnd ? 1 : byRecentRegistered(a, b))).slice(0, 4);
+  const deliveryAvailable = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productFulfillmentOptions(product).includes("delivery"))
+    .sort(byRecentRegistered).slice(0, 4);
   pageContent.innerHTML = `
     <section class="store-information" aria-labelledby="storeInfoTitle">
       <h1 id="storeInfoTitle" class="sr-only">매장 정보</h1>
@@ -742,7 +746,7 @@ function renderCatalog(params) {
     const queryMatch = !query || product.name.toLowerCase().includes(keyword) || product.category1.toLowerCase().includes(keyword) || product.category2.toLowerCase().includes(keyword);
     const fulfillmentMatch = pickupDate ? productIsPickupAvailableOn(product, pickupDate) : !fulfillment || productFulfillmentOptions(product).includes(fulfillment);
     return isRetailExposed(product) && categoryMatch && queryMatch && fulfillmentMatch;
-  }).sort((a, b) => Number(isSoldOut(a)) - Number(isSoldOut(b)));
+  }).sort((a, b) => Number(isSoldOut(a)) - Number(isSoldOut(b)) || b.retailRegisteredAt - a.retailRegisteredAt);
   const title = query ? `‘${query}’ 검색결과` : pickupDate ? `${pickupPeriodText(pickupDate, pickupDate)} 픽업 가능 상품` : fulfillment === "delivery" ? "배달 가능 상품" : category2 || category1 || "전체상품";
   pageContent.innerHTML = `
     <section class="site-width catalog-page">
@@ -758,8 +762,13 @@ function renderCatalog(params) {
     </section>`;
 }
 
+function renderNotFound() {
+  pageContent.innerHTML = `<section class="site-width not-found-page"><p>요청하신 페이지를 찾을 수 없습니다.</p></section>`;
+}
+
 function renderProduct(params) {
-  const product = products.find((item) => item.id === Number(params.get("id"))) || products[0];
+  const product = products.find((item) => item.id === Number(params.get("id")));
+  if (!product || !isRetailExposed(product)) { renderNotFound(); return; }
   const pricing = getProductPricing(product);
   const fulfillmentOptions = productFulfillmentOptions(product);
   const defaultFulfillment = normalizeFulfillment(product);
@@ -2624,7 +2633,8 @@ function renderPage() {
   else if (view === "delivery-address") renderDeliveryAddress();
   else if (view === "withdrawal") renderWithdrawal();
   else if (view === "catalog") renderCatalog(params);
-  else renderMain();
+  else if (view === "home") renderMain();
+  else renderNotFound();
   bindPhoneInputs();
   updateLoginLinks();
   const quickLink = document.querySelector("#quickOrderLookup");
