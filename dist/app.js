@@ -601,7 +601,7 @@ function writeCart(cart) {
 }
 
 function updateCartCount() {
-  const count = String(readCart().reduce((sum, item) => sum + item.quantity, 0));
+  const count = String(readCart().length);
   cartCounts.forEach((element) => { element.textContent = count; });
 }
 
