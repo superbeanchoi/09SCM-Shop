@@ -79,7 +79,7 @@ app.innerHTML = `
         </div>
         <nav aria-label="약관 메뉴"><a href="?view=terms">이용약관</a><a class="privacy-link" href="?view=privacy">개인정보처리방침</a></nav>
       </div>
-      <div class="footer-service"><strong>동네에서 함께 사는 즐거움 - 09SCM</strong><a href="https://zero-scm-homepage-mockup.csb62929.chatgpt.site" target="_blank" rel="noreferrer">09SCM 솔루션 소개 →</a></div>
+      <div class="footer-service"><strong>동네에서 함께 사는 즐거움 - 09SCM</strong><a href="https://09scm.github.io/09SCM-Homepage/" target="_blank" rel="noreferrer">09SCM 솔루션 소개 →</a></div>
     </div>
   </footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
