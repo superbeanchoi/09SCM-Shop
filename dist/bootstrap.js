@@ -35,7 +35,7 @@ app.innerHTML = `
     <form class="search-panel" id="searchPanel" role="search">
       <div class="site-width search-panel-inner">
         <label for="productSearch">상품 검색</label>
-        <input id="productSearch" type="search" placeholder="상품명을 입력해 주세요" autocomplete="off" />
+        <input id="productSearch" type="search" placeholder="상품명, 카테고리명 검색" autocomplete="off" />
         <button class="primary-button" type="submit">검색</button>
         <button class="secondary-button desktop-only" id="searchClose" type="button">닫기</button>
       </div>
@@ -86,6 +86,6 @@ app.innerHTML = `
 `;
 
 const logic = document.createElement("script");
-logic.src = "./app.js?v=20261027-2";
+logic.src = "./app.js?v=20261027-3";
 document.body.appendChild(logic);
 

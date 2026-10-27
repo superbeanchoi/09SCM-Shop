@@ -691,9 +691,9 @@ function productCard(product) {
 }
 
 function renderMain() {
-  const featured = products.filter((product) => isRetailExposed(product) && product.featured).slice(0, 8);
-  const todayPickup = products.filter((product) => isRetailExposed(product) && productIsPickupAvailableOn(product, localDateKey())).slice(0, 4);
-  const deliveryAvailable = products.filter((product) => isRetailExposed(product) && productFulfillmentOptions(product).includes("delivery")).slice(0, 4);
+  const featured = products.filter((product) => isRetailExposed(product) && product.featured);
+  const todayPickup = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productIsPickupAvailableOn(product, localDateKey())).slice(0, 4);
+  const deliveryAvailable = products.filter((product) => isRetailExposed(product) && !isSoldOut(product) && productFulfillmentOptions(product).includes("delivery")).slice(0, 4);
   pageContent.innerHTML = `
     <section class="store-information" aria-labelledby="storeInfoTitle">
       <h1 id="storeInfoTitle" class="sr-only">매장 정보</h1>
@@ -738,10 +738,11 @@ function renderCatalog(params) {
   const fulfillment = params.get("fulfillment") || "";
   const visible = products.filter((product) => {
     const categoryMatch = (!category1 || product.category1 === category1) && (!category2 || product.category2 === category2);
-    const queryMatch = !query || product.name.includes(query) || product.category1.includes(query) || product.category2.includes(query);
+    const keyword = query.toLowerCase();
+    const queryMatch = !query || product.name.toLowerCase().includes(keyword) || product.category1.toLowerCase().includes(keyword) || product.category2.toLowerCase().includes(keyword);
     const fulfillmentMatch = pickupDate ? productIsPickupAvailableOn(product, pickupDate) : !fulfillment || productFulfillmentOptions(product).includes(fulfillment);
     return isRetailExposed(product) && categoryMatch && queryMatch && fulfillmentMatch;
-  });
+  }).sort((a, b) => Number(isSoldOut(a)) - Number(isSoldOut(b)));
   const title = query ? `‘${query}’ 검색결과` : pickupDate ? `${pickupPeriodText(pickupDate, pickupDate)} 픽업 가능 상품` : fulfillment === "delivery" ? "배달 가능 상품" : category2 || category1 || "전체상품";
   pageContent.innerHTML = `
     <section class="site-width catalog-page">
