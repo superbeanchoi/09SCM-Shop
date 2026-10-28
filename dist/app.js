@@ -1684,9 +1684,8 @@ function openRequestDetailModal(orderNumber) {
   const isPending = order.cancelRefundStatus.endsWith("요청");
   const isApproved = order.cancelRefundStatus.endsWith("승인");
   const refundAmount = order.refundType === "전체환불" ? totals.finalTotal : order.refundAmount;
-  const maskedAccount = String(order.refundAccount || "").replace(/\d(?=\d{4})/g, "*");
   const refundInfo = order.payment !== "card" && order.refundAccount
-    ? `<div><dt>환불계좌</dt><dd>${escapeText(order.refundBank || "-")} / ${escapeText(maskedAccount)} / ${escapeText(order.refundHolder || "-")}</dd></div>`
+    ? `<div><dt>환불계좌</dt><dd>${escapeText(order.refundBank || "-")} / ${escapeText(order.refundAccount || "-")} / ${escapeText(order.refundHolder || "-")}</dd></div>`
     : "";
   document.body.insertAdjacentHTML("beforeend", `
     <div class="order-modal-backdrop" id="orderRequestModal">
