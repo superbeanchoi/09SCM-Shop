@@ -1795,3 +1795,16 @@ body.is-unavailable .quick-order-lookup { display: none; }
   font-size: 16px;
   color: #444;
 }
+
+.product-description {
+  max-width: 860px;
+  margin: 48px auto 0;
+  padding: 40px 0;
+  border-top: 1px solid var(--text-body);
+  text-align: center;
+}
+.product-description > img { display: block; width: 100%; height: auto; margin: 0 0 28px; }
+.product-description > p { margin: 0 0 8px; color: var(--text-body); font-size: 14px; line-height: 1.7; }
+@media (max-width: 720px) {
+  .product-description { margin-top: 36px; padding: 28px 0; }
+}

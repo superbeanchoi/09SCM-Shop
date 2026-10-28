@@ -86,6 +86,6 @@ app.innerHTML = `
 `;
 
 const logic = document.createElement("script");
-logic.src = "./app.js?v=20261027-4";
+logic.src = "./app.js?v=20261028-1";
 document.body.appendChild(logic);
 

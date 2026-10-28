@@ -834,18 +834,13 @@ function renderProduct(params) {
             <div class="detail-actions"><button class="secondary-button" id="addToCart" type="button" ${soldOut ? "disabled" : ""}>장바구니 담기</button><button class="primary-button" id="buyNow" type="button" ${soldOut ? "disabled" : ""}>바로 주문</button></div>
           </div>
         </div>
-        <section class="simple-description">
-          <div class="description-copy">
-            <span>온마을 공동구매 상품</span>
-            <h2>싱싱한 제철 먹거리를 함께 준비했습니다</h2>
-            <p>산지와 입고 상태를 확인한 상품으로, 공동구매 주문 마감 후 온마을 매장에서 수령할 수 있습니다.</p>
-            <dl>
-              <div><dt>상품 특징</dt><dd>제철 산지 상품을 공동구매 수량에 맞춰 준비합니다.</dd></div>
-              <div><dt>보관 방법</dt><dd>수령 후 냉장 보관하고 가급적 빠르게 드세요.</dd></div>
-              <div><dt>수령 안내</dt><dd>수령 예정일에 주문자명과 연락처를 확인해 주세요.</dd></div>
-            </dl>
-          </div>
+        <section class="product-description" aria-label="상세정보">
           <img src="./banner-seasonal-produce.png" alt="온마을 공동구매에서 준비한 신선한 농산물" />
+          <p>싱싱한 제철 먹거리를 함께 준비했습니다</p>
+          <p>산지와 입고 상태를 확인한 상품으로, 공동구매 주문 마감 후 온마을 매장에서 수령할 수 있습니다.</p>
+          <p>상품 특징 : 제철 산지 상품을 공동구매 수량에 맞춰 준비합니다.</p>
+          <p>보관 방법 : 수령 후 냉장 보관하고 가급적 빠르게 드세요.</p>
+          <p>수령 안내 : 수령 예정일에 주문자명과 연락처를 확인해 주세요.</p>
         </section>
       </div>
     </section>`;
