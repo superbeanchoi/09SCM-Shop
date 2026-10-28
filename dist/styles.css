@@ -972,7 +972,7 @@ img { display: block; max-width: 100%; }
 
 /* Order form and order completion */
 .checkout-page,
-.order-complete-page { padding-top: 28px; padding-bottom: 72px; }
+.order-complete-page { padding: 28px 24px 72px; }
 .checkout-heading { margin-bottom: 22px; }
 .checkout-layout,
 .completion-layout { display: grid; grid-template-columns: minmax(0, 8fr) minmax(300px, 4fr); gap: 24px; align-items: start; }
