@@ -554,6 +554,11 @@ function isRetailExposed(product) {
   return product.retailExposure === "노출중";
 }
 
+function purchaseLimit(product) {
+  const stock = Math.max(1, product.stock || 1);
+  return product.maxPurchase ? Math.max(1, Math.min(product.maxPurchase, stock)) : stock;
+}
+
 function isSoldOut(product) {
   return Boolean(product.soldOut || product.stock < 1);
 }
@@ -773,7 +778,7 @@ function renderProduct(params) {
   const fulfillmentOptions = productFulfillmentOptions(product);
   const defaultFulfillment = normalizeFulfillment(product);
   const soldOut = isSoldOut(product);
-  const maxPurchase = Math.max(1, Math.min(product.maxPurchase || 5, product.stock || 1));
+  const maxPurchase = purchaseLimit(product);
   const galleryPositions = product.galleryPositions || [product.imagePosition || "65% center", "50% center", "82% center"];
   const galleryImages = galleryPositions.map((position, index) => ({
     src: "./banner-seasonal-produce.png",
@@ -810,7 +815,7 @@ function renderProduct(params) {
             </div>
             <dl class="detail-list">
               <div><dt>상품 구성</dt><dd>${product.composition || `${product.name} 1개`}</dd></div>
-              <div><dt>1회 최대구매수량</dt><dd>${maxPurchase}개</dd></div>
+              ${product.maxPurchase ? `<div><dt>1회 최대구매수량</dt><dd>${product.maxPurchase}개</dd></div>` : ""}
               <div><dt>원산지</dt><dd>${product.origin || "국내산"}</dd></div>
               <div><dt>소비기한</dt><dd>${product.expiry || "수령 후 냉장 보관 3일"}</dd></div>
               ${fulfillmentOptions.includes("pickup") ? `<div><dt>픽업가능일</dt><dd>${pickupPeriodText(product.pickupStart, product.pickupEnd)}</dd></div>` : ""}
@@ -898,7 +903,7 @@ function addProductToCart(product, fulfillment) {
   const selectedFulfillment = normalizeFulfillment(product, fulfillment);
   const cart = readCart();
   const existing = cart.find((item) => item.id === product.id && item.fulfillment === selectedFulfillment);
-  const limit = Math.max(1, Math.min(product.maxPurchase || 5, product.stock || 1));
+  const limit = purchaseLimit(product);
   if (existing) existing.quantity = Math.min(limit, existing.quantity + quantity);
   else cart.push({ id: product.id, quantity, fulfillment: selectedFulfillment });
   writeCart(cart);
@@ -940,7 +945,7 @@ function openFulfillmentChangeModal(item) {
     const source = cart[sourceIndex];
     const destination = cart.find((cartItem, index) => index !== sourceIndex && cartItem.id === source.id && cartItem.fulfillment === nextFulfillment);
     if (destination) {
-      const limit = Math.max(1, Math.min(item.product.maxPurchase || 5, item.product.stock || 1));
+      const limit = purchaseLimit(item.product);
       destination.quantity = Math.min(limit, destination.quantity + source.quantity);
       cart.splice(sourceIndex, 1);
     } else {
@@ -998,7 +1003,7 @@ function renderCart() {
               <div class="cart-quantity-stepper" aria-label="${product.name} 수량 조절">
                 <button type="button" data-cart-quantity-action="minus" data-cart-key="${key}" aria-label="수량 줄이기" ${soldOut || quantity <= 1 ? "disabled" : ""}>−</button>
                 <span>${quantity}</span>
-                <button type="button" data-cart-quantity-action="plus" data-cart-key="${key}" aria-label="수량 늘리기" ${soldOut || quantity >= Math.max(1, Math.min(product.maxPurchase || 5, product.stock || 1)) ? "disabled" : ""}>+</button>
+                <button type="button" data-cart-quantity-action="plus" data-cart-key="${key}" aria-label="수량 늘리기" ${soldOut || quantity >= purchaseLimit(product) ? "disabled" : ""}>+</button>
               </div>
               <strong class="cart-line-total">${formatPrice(product.price * quantity)}</strong>
             </div>
@@ -1041,7 +1046,7 @@ function renderCart() {
     const item = next.find((cartItem) => cartItemKey(cartItem) === button.dataset.cartKey);
     const product = item && products.find((productItem) => productItem.id === item.id);
     if (item && product) {
-      const limit = Math.max(1, Math.min(product.maxPurchase || 5, product.stock || 1));
+      const limit = purchaseLimit(product);
       item.quantity = button.dataset.cartQuantityAction === "plus" ? Math.min(limit, item.quantity + 1) : Math.max(1, item.quantity - 1);
     }
     writeCart(next);
