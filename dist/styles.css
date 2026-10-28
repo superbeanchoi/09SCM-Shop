@@ -1722,6 +1722,7 @@ img { display: block; max-width: 100%; }
 .quick-lookup-tabs b { margin-left: 4px; }
 .quick-lookup-list { display: grid; gap: 16px; margin-top: 20px; }
 .quick-lookup-empty { margin: 0; border: 1px solid var(--border); padding: 32px 16px; color: var(--text-secondary); text-align: center; }
+#quickLookupResult > .quick-lookup-empty, #unavailableLookupResult > .quick-lookup-empty { margin-top: 24px; }
 .quick-order-card { border: 1px solid var(--border); border-radius: 6px; background: var(--surface); }
 .quick-order-card > header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; border-bottom: 1px solid var(--border); padding: 14px 20px; }
 .quick-order-card > header span { color: var(--text-secondary); }
