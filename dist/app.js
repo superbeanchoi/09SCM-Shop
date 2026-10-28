@@ -1685,7 +1685,7 @@ function openRequestDetailModal(orderNumber) {
   const isApproved = order.cancelRefundStatus.endsWith("승인");
   const refundAmount = order.refundType === "전체환불" ? totals.finalTotal : order.refundAmount;
   const refundInfo = order.payment !== "card" && order.refundAccount
-    ? `<div><dt>환불계좌</dt><dd>${escapeText(order.refundBank || "-")} / ${escapeText(order.refundAccount || "-")} / ${escapeText(order.refundHolder || "-")}</dd></div>`
+    ? `<div><dt>환불정보</dt><dd>${escapeText(order.refundBank || "-")} / ${escapeText(order.refundAccount || "-")} / ${escapeText(order.refundHolder || "-")}</dd></div>`
     : "";
   document.body.insertAdjacentHTML("beforeend", `
     <div class="order-modal-backdrop" id="orderRequestModal">
@@ -1819,7 +1819,7 @@ function renderQuickOrderLookup() {
         button.setAttribute("aria-selected", String(selected));
       });
       const visible = orders.filter((order) => quickLookupIsComplete(order) === (tab === "complete"));
-      list.innerHTML = visible.length ? visible.map(quickLookupOrderCard).join("") : `<p class="quick-lookup-empty">${tab === "complete" ? "완료된" : "진행 중인"} 주문이 없습니다.</p>`;
+      list.innerHTML = visible.length ? visible.map((order) => quickLookupOrderCard(order)).join("") : `<p class="quick-lookup-empty">${tab === "complete" ? "완료된" : "진행 중인"} 주문이 없습니다.</p>`;
       list.querySelectorAll("[data-quick-action]").forEach((button) => button.addEventListener("click", () => openQuickOrder(button.dataset.orderNumber, button.dataset.quickAction)));
     };
     result.querySelectorAll("[data-quick-tab]").forEach((button) => button.addEventListener("click", () => selectTab(button.dataset.quickTab)));
@@ -1905,7 +1905,7 @@ function orderListCard(order) {
   const first = rows[0];
   const totals = orderTotals(order);
   return `
-    <article class="order-history-card" data-process-status="${displayedProcessStatus(order)}" data-cancel-refund-status="${order.cancelRefundStatus || ""}" data-order-channel="${order.orderChannel}">
+    <article class="order-history-card" data-process-status="${displayedProcessStatus(order)}" data-cancel-refund-status="${order.cancelRefundStatus || ""}" data-order-channel="${order.orderChannel}" data-ordered-at="${order.orderedAt.replaceAll(".", "-")}">
       <header>
         <strong>${order.orderedAt}</strong>
         <div class="order-history-header-meta">${order.fulfillment === "pickup" && order.pickupWindow ? `<span>공통 픽업가능일 <b>${pickupPeriodText(order.pickupWindow.start, order.pickupWindow.end)}</b></span>` : ""}<span>주문번호 <b>${order.orderNumber}</b></span></div>
@@ -1938,7 +1938,7 @@ function renderOrderHistory() {
     <header class="mypage-content-heading"><h2>주문내역</h2><p>주문상품과 수령·결제 상태를 확인할 수 있습니다.</p></header>
     <div class="order-channel-tabs" role="tablist" aria-label="주문경로"><button type="button" class="is-active" data-order-channel-filter="">전체</button><button type="button" data-order-channel-filter="링크주문">링크주문</button><button type="button" data-order-channel-filter="채팅주문">채팅주문</button></div>
     <div class="order-history-filter">
-      <div class="period-buttons" aria-label="조회 기간"><button class="is-active" type="button">1개월</button><button type="button">3개월</button><button type="button">6개월</button></div>
+      <div class="period-buttons" aria-label="조회 기간"><button class="is-active" type="button" data-period-months="1">1개월</button><button type="button" data-period-months="3">3개월</button><button type="button" data-period-months="6">6개월</button></div>
       <label><span class="sr-only">처리상태</span><select id="orderStatusFilter"><option value="">전체 상태</option><optgroup label="주문상태"><option>주문접수</option><option>픽업대기</option><option>픽업완료</option><option>배달대기</option><option>배달중</option><option>배달완료</option></optgroup><optgroup label="취소·반품상태"><option>취소요청</option><option>취소승인</option><option>취소반려</option><option>반품요청</option><option>반품승인</option><option>반품반려</option></optgroup></select></label>
       <button class="secondary-button" id="orderHistorySearch" type="button">조회</button>
     </div>
@@ -1957,15 +1957,21 @@ function renderOrderHistory() {
   let activeChannel = "";
   const applyOrderFilters = () => {
     const selected = document.querySelector("#orderStatusFilter").value;
+    const months = Number(document.querySelector(".period-buttons .is-active")?.dataset.periodMonths) || 1;
+    const cards = [...document.querySelectorAll(".order-history-card")];
+    const latest = new Date(Math.max(...cards.map((card) => new Date(card.dataset.orderedAt).getTime())));
+    const from = new Date(latest);
+    from.setMonth(from.getMonth() - months);
     let visibleCount = 0;
-    document.querySelectorAll(".order-history-card").forEach((card) => {
+    cards.forEach((card) => {
       const statusMatch = !selected || card.dataset.processStatus === selected || card.dataset.cancelRefundStatus === selected;
-      const visible = statusMatch && (!activeChannel || card.dataset.orderChannel === activeChannel);
+      const periodMatch = new Date(card.dataset.orderedAt) >= from;
+      const visible = statusMatch && periodMatch && (!activeChannel || card.dataset.orderChannel === activeChannel);
       card.hidden = !visible;
       if (visible) visibleCount += 1;
     });
     document.querySelector("#orderHistoryCount").textContent = String(visibleCount);
-    if (!visibleCount) showToast("선택한 상태의 주문이 없습니다.");
+    if (!visibleCount) showToast("조건에 맞는 주문이 없습니다.");
   };
   document.querySelector("#orderHistorySearch").addEventListener("click", applyOrderFilters);
   document.querySelectorAll("[data-order-channel-filter]").forEach((button) => button.addEventListener("click", () => {
