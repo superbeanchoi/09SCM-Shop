@@ -627,6 +627,17 @@ function escapeText(value) {
     .replaceAll(String.fromCharCode(39), "&#039;");
 }
 
+// [주문하기] 시점 재검증: 먼저 걸린 한 가지 안내만 반환한다
+function orderItemsIssue(items) {
+  const rows = items.map((item) => ({ ...item, product: products.find((product) => product.id === item.id) }));
+  if (rows.some((item) => item.product && isSoldOut(item.product))) return "품절상품이 존재합니다.";
+  if (rows.some((item) => !item.product || item.product.hidden || !productFulfillmentOptions(item.product).includes(item.fulfillment))) return "구매불가 상품이 존재합니다.";
+  if (rows.some((item) => item.quantity > item.product.stock)) return "재고가 부족한 상품이 있습니다.";
+  if (rows.some((item) => item.product.maxPurchase && item.quantity > item.product.maxPurchase)) return "1회 최대구매수량을 초과한 상품이 있습니다.";
+  if (rows.some((item) => item.fulfillment === "pickup") && !pickupWindowIntersection(rows)) return "선택한 상품의 픽업 가능일이 겹치지 않습니다. 상품을 나눠 주문해 주세요.";
+  return "";
+}
+
 function saveOrderDraft(items, source) {
   const rows = items.map((item) => ({ ...item, product: products.find((product) => product.id === item.id) })).filter((item) => item.product);
   if (rows.some((item) => isSoldOut(item.product))) return showToast("품절 상품은 주문할 수 없습니다. 장바구니를 확인해 주세요.");
@@ -1224,6 +1235,8 @@ function renderOrder() {
     if (fulfillment === "delivery" && !deliveryAddress) return showToast("배달 주소를 입력해 주세요.");
     if (payment === "transfer" && !depositorName) return showToast("입금자명을 입력해 주세요.");
     if (!document.querySelector("#orderAgreement").checked) return showToast("주문내용동의가 필요합니다.");
+    const itemsIssue = orderItemsIssue(draft.items);
+    if (itemsIssue) return showToast(itemsIssue);
     const deliveryFee = fulfillment === "delivery" ? DELIVERY_FEE : 0;
     const now = new Date();
     const lastOrder = {
