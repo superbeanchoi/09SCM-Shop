@@ -477,6 +477,39 @@ function loggedInPhone() {
   try { return phoneDigits(JSON.parse(localStorage.getItem("onmaeul-login"))?.phone); } catch { return ""; }
 }
 
+const demoPassword = "demo1234";
+const demoVerificationCode = "123456";
+const verificationCodeTtl = 3 * 60 * 1000;
+const seedAccounts = {
+  "01012345678": { password: demoPassword, status: "정상" },
+  "01012341234": { password: demoPassword, status: "정상" },
+  "01055557777": { password: demoPassword, status: "이용제한" },
+};
+
+function readAccountStore() {
+  try { return JSON.parse(localStorage.getItem("onmaeul-accounts")) || {}; } catch { return {}; }
+}
+
+function findAccount(phone) {
+  const saved = readAccountStore()[phone];
+  if (saved?.removed) return null;
+  const seed = seedAccounts[phone];
+  if (!seed && !saved) return null;
+  return { status: "정상", ...seed, ...saved };
+}
+
+function saveAccount(phone, patch) {
+  const store = readAccountStore();
+  store[phone] = { ...store[phone], ...patch };
+  localStorage.setItem("onmaeul-accounts", JSON.stringify(store));
+}
+
+function verificationCodeIssue(sentAt, code) {
+  if (sentAt && Date.now() - sentAt > verificationCodeTtl) return "인증번호 유효시간이 지났습니다. 인증번호를 다시 받아 주세요.";
+  if (code !== demoVerificationCode) return "인증번호가 일치하지 않습니다.";
+  return "";
+}
+
 function formatPhone(value) {
   const digits = phoneDigits(value);
   if (digits.length <= 3) return digits;
@@ -1562,6 +1595,9 @@ function renderWithdrawal() {
     if (isBlocked) return showToast("진행 중인 주문을 먼저 완료해 주세요.");
     const form = event.currentTarget;
     if (!form.reportValidity()) return;
+    const account = findAccount(loggedInPhone());
+    if (!account || account.password !== form.elements.password.value) return showToast("비밀번호가 일치하지 않습니다.");
+    saveAccount(loggedInPhone(), { removed: true });
     localStorage.removeItem("onmaeul-login");
     showToast("회원탈퇴가 완료되었습니다.");
     window.setTimeout(() => { window.location.href = "./index.html"; }, 600);
@@ -2105,6 +2141,12 @@ function renderLogin() {
     const data = new FormData(event.currentTarget);
     const phone = phoneDigits(data.get("phone"));
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
+    const account = findAccount(phone);
+    if (!account || account.password !== data.get("password")) {
+      document.querySelector("#loginPassword").value = "";
+      return showToast("휴대폰번호 또는 비밀번호가 올바르지 않습니다.");
+    }
+    if (account.status === "이용제한") return showToast("현재 이용이 제한되어 로그인할 수 없습니다. 자세한 사항은 판매자에게 문의해 주세요.");
     let intent;
     try { intent = JSON.parse(sessionStorage.getItem("onmaeul-quick-order-intent")); } catch {}
     if (intent?.orderNumber) {
@@ -2190,6 +2232,7 @@ function renderSignup() {
   let phoneVerified = false;
   let checkedPhone = "";
   let codeSentPhone = "";
+  let codeSentAt = 0;
   let aliasChecked = false;
   phoneInput.addEventListener("input", () => {
     checkedPhone = "";
@@ -2223,6 +2266,7 @@ function renderSignup() {
     const phone = phoneDigits(phoneInput.value);
     if (checkedPhone !== phone) return showToast("휴대폰번호 중복확인을 먼저 완료해 주세요.");
     codeSentPhone = phone;
+    codeSentAt = Date.now();
     phoneVerified = false;
     phoneMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
     phoneMessage.classList.remove("is-success");
@@ -2236,6 +2280,8 @@ function renderSignup() {
   document.querySelector("#verifySignupCode").addEventListener("click", () => {
     if (!codeSentPhone || codeSentPhone !== phoneDigits(phoneInput.value)) return showToast("인증번호를 먼저 발송해 주세요.");
     if (!/^\d{6}$/.test(document.querySelector("#signupCode").value)) return showToast("인증번호 6자리를 입력해 주세요.");
+    const codeIssue = verificationCodeIssue(codeSentAt, document.querySelector("#signupCode").value);
+    if (codeIssue) return showToast(codeIssue);
     phoneVerified = true;
     phoneMessage.textContent = "휴대폰번호 인증이 완료되었습니다.";
     phoneMessage.classList.add("is-success");
@@ -2266,6 +2312,7 @@ function renderSignup() {
     if (!form.reportValidity()) return;
     const data = Object.fromEntries(new FormData(form).entries());
     data.phone = phoneDigits(data.phone);
+    saveAccount(data.phone, { password: data.password, status: "정상", removed: false });
     localStorage.setItem("onmaeul-member", JSON.stringify(data));
     localStorage.setItem("onmaeul-login", JSON.stringify({ phone: data.phone, keepLogin: true }));
     sessionStorage.setItem("onmaeul-signup-complete", JSON.stringify({ nicknameCode: data.nicknameCode, chatNickname: data.chatNickname }));
@@ -2430,6 +2477,7 @@ function renderFranchiseSignup() {
   const franchiseIdGuide = "※ 아이디는 소매몰 주소(아이디.09scm.com)와 관리자 로그인에 사용되며, 승인 후 변경할 수 없습니다.";
   let userIdChecked = false;
   let phoneVerified = false;
+  let franchiseCodeSentAt = 0;
   let businessVerified = false;
 
   document.querySelector("#checkFranchiseUserId").addEventListener("click", () => {
@@ -2447,6 +2495,7 @@ function renderFranchiseSignup() {
   document.querySelector("#sendFranchiseCode").addEventListener("click", () => {
     const phone = phoneDigits(document.querySelector("#franchisePhone").value);
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
+    franchiseCodeSentAt = Date.now();
     phoneVerified = false;
     phoneMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
     phoneMessage.classList.remove("is-success");
@@ -2459,6 +2508,8 @@ function renderFranchiseSignup() {
   });
   document.querySelector("#verifyFranchiseCode").addEventListener("click", () => {
     if (!/^\d{6}$/.test(document.querySelector("#franchiseCode").value)) return showToast("인증번호 6자리를 입력해 주세요.");
+    const codeIssue = verificationCodeIssue(franchiseCodeSentAt, document.querySelector("#franchiseCode").value);
+    if (codeIssue) return showToast(codeIssue);
     phoneVerified = true;
     phoneMessage.textContent = "휴대폰번호 인증이 완료되었습니다.";
     phoneMessage.classList.add("is-success");
@@ -2554,15 +2605,23 @@ function renderPasswordReset() {
   bindPasswordToggles();
   const resetMessage = document.querySelector("#resetMessage");
   const resetNext = document.querySelector("#resetNext");
+  let resetPhone = "";
+  let resetCodeSentAt = 0;
   document.querySelector("#sendResetCode").addEventListener("click", () => {
     const phone = phoneDigits(document.querySelector("#resetPhone").value);
     if (phone.length !== 11) return showToast("휴대폰번호 11자리를 입력해 주세요.");
+    if (!findAccount(phone)) return showToast("가입되지 않은 휴대폰번호입니다.");
+    resetPhone = phone;
+    resetCodeSentAt = Date.now();
     resetNext.disabled = true;
     resetMessage.textContent = "인증번호가 발송되었습니다. 유효시간 03:00";
     resetMessage.classList.remove("is-success");
   });
   document.querySelector("#verifyResetCode").addEventListener("click", () => {
+    if (!resetCodeSentAt) return showToast("인증번호를 먼저 발송해 주세요.");
     if (!/^\d{6}$/.test(document.querySelector("#resetCode").value)) return showToast("인증번호 6자리를 입력해 주세요.");
+    const codeIssue = verificationCodeIssue(resetCodeSentAt, document.querySelector("#resetCode").value);
+    if (codeIssue) return showToast(codeIssue);
     resetNext.disabled = false;
     resetMessage.textContent = "휴대폰번호 인증이 완료되었습니다.";
     resetMessage.classList.add("is-success");
@@ -2577,6 +2636,7 @@ function renderPasswordReset() {
     const form = event.currentTarget;
     if (form.elements.newPassword.value !== form.elements.newPasswordConfirm.value) return showToast("비밀번호가 일치하지 않습니다.");
     if (!form.reportValidity()) return;
+    saveAccount(resetPhone, { password: form.elements.newPassword.value });
     showToast("비밀번호가 변경되었습니다.");
     window.setTimeout(() => { window.location.href = "?view=login"; }, 600);
   });
