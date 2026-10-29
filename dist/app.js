@@ -2571,7 +2571,7 @@ function showFranchiseApplicationModal() {
       <p>소속 본사에서 신청 내용을 확인한 후<br />입력한 휴대폰번호로 승인 결과를 안내드립니다.</p>
       <div class="franchise-modal-actions">
         <a class="secondary-button" href="./index.html">메인화면 복귀</a>
-        <a class="primary-button" href="https://0scm.com/">09SCM 솔루션 소개 홈페이지 이동</a>
+        <a class="primary-button" href="https://09scm.github.io/09SCM-Homepage/">09SCM 솔루션 소개 홈페이지 이동</a>
       </div>
     </section>`;
   document.body.appendChild(modal);
